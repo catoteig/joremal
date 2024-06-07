@@ -126,7 +126,11 @@ const TodoList: React.FC<{
         </Grid>
       ) : (
         <>
-          <Grid xs={12} sx={{ padding:0, paddingTop: 1, verticalAlign: 'middle', borderBottom:'1px solid lightgrey' }} height={'3.3rem'}>
+          <Grid
+            xs={12}
+            sx={{ padding: 0, paddingTop: 1, verticalAlign: 'middle', borderBottom: '1px solid lightgrey' }}
+            height={'3.3rem'}
+          >
             <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
               <IconButton onClick={handleToggleAll} disabled={!hasTodos}>
                 {incompleteTodos === 0 ? <CheckBoxOutlineBlankOutlined /> : <CheckBoxOutlined />}
@@ -187,7 +191,7 @@ const TodoList: React.FC<{
                       <ListItem
                         key={todo.id}
                         secondaryAction={
-                          <Stack>
+                          <Stack width={'100%'}>
                             <IconButton
                               edge="end"
                               aria-label="delete"
@@ -212,11 +216,15 @@ const TodoList: React.FC<{
                               sx={{ paddingLeft: 2 }}
                             />
                           </ListItemIcon>
-                          <Stack>
-                            <ListItemText id={labelId} primary={todo.notes} />
-                            <Divider></Divider>
+                          <Grid sx={{ padding: 0 }} width={'100%'} height={'100%'}>
+                            {todo.notes && (
+                              <>
+                                <ListItemText id={labelId} primary={todo.notes} />
+                                <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
+                              </>
+                            )}
                             <ListItemText
-                              sx={{ fontStyle: 'italic', margin: 0, marginTop: 1 }}
+                              sx={{ fontStyle: 'italic', margin: 0, marginTop: 0 }}
                               id={labelId}
                               primary={`${created}${updatedString}`}
                             />
@@ -227,7 +235,7 @@ const TodoList: React.FC<{
                             {/*    primary={`Oppdatert ${updated}`}*/}
                             {/*  />*/}
                             {/*)}*/}
-                          </Stack>
+                          </Grid>
                         </ListItemButton>
                       </ListItem>
                     </AccordionDetails>

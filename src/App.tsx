@@ -56,7 +56,7 @@ const App = () => {
   const [noteFieldValue, setNoteFieldValue] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
-  const [width, setWidth] = useState<number>(window.innerWidth)
+  const [, setWidth] = useState<number>(window.innerWidth)
   const [addVisible, setAddVisible] = React.useState<boolean>(true)
   const todoNameRef = useRef<HTMLInputElement>(null)
 
@@ -70,7 +70,7 @@ const App = () => {
     }
   }, [])
 
-  const isMobile = width <= 768
+  // const isMobile = width <= 768
 
   const handleAddVisible = () => {
     setAddVisible(!addVisible)
@@ -263,9 +263,9 @@ const App = () => {
             transform: 'translateX(-50%)',
             backgroundColor: 'white',
             padding: '10px',
-            border: isMobile ? '1px solid grey' : '1px dashed grey',
+            border: '1px solid grey',
             borderRadius: 2,
-            width: isMobile ? '100%' : '400px',
+            width: '400px',
           }}
         >
           <Grow in={true} key="addVisible">
