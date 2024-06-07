@@ -1,10 +1,10 @@
 :root {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #023C40;
-  background-color: #E1FAF9;
+  color: #023c40;
+  background-color: #f9f8f8;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -30,7 +30,11 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2em;
+  line-height: 1.1;
+}
+h2 {
+  font-size: 1.5em;
   line-height: 1.1;
 }
 
@@ -51,6 +55,10 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+input {
+  margin-left: 1.2em;
 }
 
 @media (prefers-color-scheme: light) {

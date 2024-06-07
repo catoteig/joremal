@@ -17,6 +17,8 @@
     "@fontsource/roboto": "^5.0.13",
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
+    "firebase": "^10.12.2",
+    "@firebase/firestore-types": "^3.0.2",
     "material-ui-popup-state": "^5.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -24,6 +26,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@simbathesailor/babel-plugin-use-what-changed": "^2.1.0",
+    "@simbathesailor/use-what-changed": "^2.0.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/uuid": "^9.0.8",
