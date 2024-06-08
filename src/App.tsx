@@ -2,7 +2,7 @@ import './App.css'
 import TodoList from './todoList.tsx'
 import * as React from 'react'
 import { SetStateAction, useEffect, useRef, useState } from 'react'
-import { Box, Chip, Fab, Grow, Stack, ThemeProvider } from '@mui/material'
+import { Chip, Fab, Grow, Modal, Stack, ThemeProvider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { AddTaskOutlined, Check, InfoOutlined } from '@mui/icons-material'
 import { createTheme } from '@mui/material/styles'
@@ -237,43 +237,26 @@ const App = () => {
           />
         </Grid>
       </Grid>
-      {addVisible && (
-        <Box
-          id="Box2"
-          sx={{
-            position: 'fixed',
-            bottom: '6rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: 'white',
-            padding: '10px',
-            border: '1px solid grey',
-            borderRadius: 2,
-            width: '400px',
-          }}
+      {!addVisible && (
+        <Fab
+          aria-label="Create"
+          color="warning"
+          sx={{ position: 'absolute', bottom: '3rem', right: '3rem' }}
+          onClick={handleAddVisible}
         >
-          <Grow in={true} key="addVisible">
-            <Grid container spacing={2} alignItems={'flex-start'}>
-              <TodoSubmit
-                todoNameRef={todoNameRef}
-                inputFieldValue={inputFieldValue}
-                noteFieldValue={noteFieldValue}
-                onFormSubmit={onFormSubmit}
-                handleInputFieldChange={handleInputFieldChange}
-                handleNoteFieldChange={handleNoteFieldChange}
-              />
-            </Grid>
-          </Grow>
-        </Box>
+          <AddTaskOutlined />
+        </Fab>
       )}
-      <Fab
-        aria-label="Create"
-        color="warning"
-        sx={{ position: 'absolute', bottom: '3rem', right: '3rem' }}
-        onClick={handleAddVisible}
-      >
-        <AddTaskOutlined />
-      </Fab>
+      <Modal open={addVisible} onClose={handleAddVisible}>
+        <TodoSubmit
+          todoNameRef={todoNameRef}
+          inputFieldValue={inputFieldValue}
+          noteFieldValue={noteFieldValue}
+          onFormSubmit={onFormSubmit}
+          handleInputFieldChange={handleInputFieldChange}
+          handleNoteFieldChange={handleNoteFieldChange}
+        />
+      </Modal>
     </ThemeProvider>
   )
 }

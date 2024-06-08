@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { RefObject } from 'react'
-import { Stack, TextField } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import { Box, Stack, TextField } from '@mui/material'
 
 import { CheckOutlined } from '@mui/icons-material'
 import Button from '@mui/material/Button'
@@ -22,7 +21,20 @@ const TodoSubmit: React.FC<{
   handleInputFieldChange,
 }) => {
   return (
-    <Grid xs={12}>
+    <Box
+      sx={{
+        position: 'absolute',
+        bottom: '3rem',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '1px dashed grey',
+        borderRadius: 2,
+        boxShadow: 24,
+        p: 2,
+      }}
+    >
       <form onSubmit={onFormSubmit}>
         <TextField
           sx={{ paddingTop: 1 }}
@@ -47,13 +59,13 @@ const TodoSubmit: React.FC<{
             placeholder={'Kommentar'}
             fullWidth
           />
-          <Button type="submit" disabled={!inputFieldValue.trim()}>
+          <Button type="submit"  disabled={!inputFieldValue.trim()}>
             <CheckOutlined sx={{ paddingRight: 1 }} />
             {['Smekk!', 'Pang!', 'Yeah!', 'Boom!', 'Pffft!'][Math.floor(Math.random() * 5)]}
           </Button>
         </Stack>
       </form>
-    </Grid>
+    </Box>
   )
 }
 export default TodoSubmit
