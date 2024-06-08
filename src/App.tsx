@@ -4,7 +4,7 @@ import * as React from 'react'
 import { SetStateAction, useEffect, useRef, useState } from 'react'
 import { Box, Chip, Grow, Stack, ThemeProvider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { Check, Info } from '@mui/icons-material'
+import { Check, InfoOutlined } from '@mui/icons-material'
 import { createTheme } from '@mui/material/styles'
 import TodoSubmit from './todoSubmit.tsx'
 import { fakerNB_NO } from '@faker-js/faker'
@@ -201,37 +201,35 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={2}>
-        <Grid xs={4} height={'4rem'}>
-          <h1>Liste</h1>
+      <Grid container spacing={2} margin={'0 .5rem'}>
+        <Grid xs={5} height={'4rem'} alignItems={'flex-end'}>
+          <h1>Jøremål</h1>
         </Grid>
-        <Grid xs={8} height={'4rem'}>
-          <Grid container justifyContent="flex-end">
-            <Stack direction={'row'} spacing={1}>
-              {completeTodos > 0 && (
-                <Grow in={true} key="completeChip">
-                  <Chip
-                    icon={<Check />}
-                    label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
-                      completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
-                    }`}
-                    color={'success'}
-                    variant="outlined"
-                  />
-                </Grow>
-              )}
-              {incompleteTodos > 0 && (
-                <Grow in={true} key="incompleteChip">
-                  <Chip
-                    label={`${incompleteTodos} ugjort${incompleteTodos === 1 ? '' : 'e'}`}
-                    color={'warning'}
-                    icon={<Info />}
-                    variant="outlined"
-                  />
-                </Grow>
-              )}
-            </Stack>
-          </Grid>
+        <Grid xs={7} height={'4rem'}>
+          <Stack direction={'row'} spacing={1} justifyContent={'flex-end'} alignItems={'flex-end'}>
+            {completeTodos > 0 && (
+              <Grow in={true} key="completeChip">
+                <Chip
+                  icon={<Check />}
+                  label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
+                    completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
+                  }`}
+                  color={'success'}
+                  variant="outlined"
+                />
+              </Grow>
+            )}
+            {incompleteTodos > 0 && (
+              <Grow in={true} key="incompleteChip">
+                <Chip
+                  label={`${incompleteTodos} ugjort${incompleteTodos === 1 ? '' : 'e'}`}
+                  color={'warning'}
+                  icon={<InfoOutlined />}
+                  variant="outlined"
+                />
+              </Grow>
+            )}
+          </Stack>
         </Grid>
         <Grid xs={12} height={'calc(100vh - 6rem)'}>
           <TodoList

@@ -67,7 +67,6 @@ const TodoList: React.FC<{
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState('')
   const [removeLoading, setRemoveLoading] = React.useState(false)
-
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
 
   const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
