@@ -39,7 +39,7 @@ const TodoList: React.FC<{
   toggleAllTodos: () => void
   removeAllTodo: () => void
   autoFill: () => void
-  incompleteTodos: number
+  hasIncompleteTodos: boolean
   completeTodos: number
   hasTodos: boolean
   orderAsc: boolean
@@ -54,7 +54,7 @@ const TodoList: React.FC<{
   removeTodo,
   hasTodos,
   toggleAllTodos,
-  incompleteTodos,
+  hasIncompleteTodos,
   completeTodos,
   removeAllTodo,
   autoFill,
@@ -127,12 +127,21 @@ const TodoList: React.FC<{
         <>
           <Grid
             xs={12}
-            sx={{ padding: 0, paddingTop: 1, verticalAlign: 'middle', borderBottom: '1px solid lightgrey' }}
+            sx={{
+              padding: 0,
+              paddingTop: 1,
+              verticalAlign: 'middle',
+              borderBottom: '1px solid lightgrey',
+            }}
             height={'3.3rem'}
           >
             <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
-              <IconButton onClick={handleToggleAll} disabled={!hasTodos}>
-                {incompleteTodos === 0 ? <CheckBoxOutlineBlankOutlined /> : <CheckBoxOutlined />}
+              <IconButton
+                onClick={handleToggleAll}
+                disabled={!hasTodos}
+                title={hasIncompleteTodos ? 'Fjern alle kryss' : 'Kryss av alle'}
+              >
+                {hasIncompleteTodos ? <CheckBoxOutlineBlankOutlined /> : <CheckBoxOutlined />}
               </IconButton>
               <IconButton onClick={handleRemoveAllClick} disabled={!completeTodos}>
                 <DeleteSweepOutlined />
@@ -143,7 +152,7 @@ const TodoList: React.FC<{
               <IconButton onClick={handleRandom}>
                 <BoltOutlined />
               </IconButton>
-              <IconButton color={addVisible ? 'success' : 'default'} onClick={setAddVisible}>
+              <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible}>
                 <AddTaskOutlined />
               </IconButton>
             </Stack>
@@ -175,7 +184,9 @@ const TodoList: React.FC<{
                     onChange={handleChange(todo.id)}
                   >
                     <AccordionSummary
-                      sx={{ backgroundColor: todo.complete ? 'rgba(189,204,164,0.55)' : 'transparent' }}
+                      sx={{
+                        backgroundColor: todo.complete ? 'rgba(189,204,164,0.55)' : 'transparent',
+                      }}
                       expandIcon={<KeyboardArrowDown />}
                     >
                       {todo.complete ? <Check sx={{ paddingRight: 1 }} /> : <></>}

@@ -2,9 +2,9 @@ import './App.css'
 import TodoList from './todoList.tsx'
 import * as React from 'react'
 import { SetStateAction, useEffect, useRef, useState } from 'react'
-import { Box, Chip, Grow, Stack, ThemeProvider } from '@mui/material'
+import { Box, Chip, Fab, Grow, Stack, ThemeProvider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { Check, InfoOutlined } from '@mui/icons-material'
+import { AddTaskOutlined, Check, InfoOutlined } from '@mui/icons-material'
 import { createTheme } from '@mui/material/styles'
 import TodoSubmit from './todoSubmit.tsx'
 import { fakerNB_NO } from '@faker-js/faker'
@@ -13,12 +13,6 @@ import { v4 } from 'uuid'
 import { capitalize } from './helpers.ts'
 import firebase from 'firebase/compat/app'
 import firestore = firebase.firestore
-
-export enum OrderBy {
-  name_asc = 'Name, ascending',
-  name_desc = 'Name, descending',
-  completed = 'Completed',
-}
 
 const LOCAL_STORAGE_KEY = 'todoApp.orderAsc'
 
@@ -57,7 +51,7 @@ const App = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
   const [, setWidth] = useState<number>(window.innerWidth)
-  const [addVisible, setAddVisible] = React.useState<boolean>(true)
+  const [addVisible, setAddVisible] = React.useState<boolean>(false)
   const todoNameRef = useRef<HTMLInputElement>(null)
 
   function handleWindowSizeChange() {
@@ -92,16 +86,6 @@ const App = () => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(orderAsc))
     handleFetch()
   }, [orderAsc])
-
-  // const orderTodos = () => {
-  //   const sorted = todos.sort((a, b) => {
-  //     if (orderAsc == OrderBy.name_asc) return b.name.localeCompare(a.name)
-  //     if (orderAsc == OrderBy.name_desc) return a.name.localeCompare(b.name)
-  //     if (orderAsc == OrderBy.completed) return Number(b.complete) - Number(a.complete)
-  //     return 0
-  //   })
-  //   setTodos(sorted)
-  // }
 
   const handleCreate = async (todo: TodoItem) => {
     await fbCreate(todo).then(() => handleFetch())
@@ -181,6 +165,7 @@ const App = () => {
   const onFormSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault()
     handleAddTodo()
+    handleAddVisible()
   }
 
   const handleInputFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
@@ -197,11 +182,12 @@ const App = () => {
     },
     { incompleteTodos: 0, completeTodos: 0 }
   )
+  const hasIncompleteTodos = incompleteTodos === 0
   const hasTodos: boolean = todos.length > 0
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={2} margin={'0 .5rem'}>
+      <Grid container spacing={'1rem'} margin={'0 .5rem'}>
         <Grid xs={5} height={'4rem'} alignItems={'flex-end'}>
           <h1>Jøremål</h1>
         </Grid>
@@ -231,7 +217,7 @@ const App = () => {
             )}
           </Stack>
         </Grid>
-        <Grid xs={12} height={'calc(100vh - 6rem)'}>
+        <Grid xs={12} height={'calc(100vh - 7rem)'}>
           <TodoList
             todos={todos}
             toggleTodo={handleToggleTodo}
@@ -239,7 +225,7 @@ const App = () => {
             toggleAllTodos={handleToggleAllTodos}
             removeAllTodo={handleRemoveCompletedTodo}
             autoFill={autoFill}
-            incompleteTodos={incompleteTodos}
+            hasIncompleteTodos={hasIncompleteTodos}
             completeTodos={completeTodos}
             hasTodos={hasTodos}
             orderAsc={orderAsc}
@@ -256,7 +242,7 @@ const App = () => {
           id="Box2"
           sx={{
             position: 'fixed',
-            bottom: '50%',
+            bottom: '6rem',
             left: '50%',
             transform: 'translateX(-50%)',
             backgroundColor: 'white',
@@ -280,6 +266,14 @@ const App = () => {
           </Grow>
         </Box>
       )}
+      <Fab
+        aria-label="Create"
+        color="warning"
+        sx={{ position: 'absolute', bottom: '3rem', right: '3rem' }}
+        onClick={handleAddVisible}
+      >
+        <AddTaskOutlined />
+      </Fab>
     </ThemeProvider>
   )
 }

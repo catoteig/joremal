@@ -34,6 +34,7 @@ const TodoSubmit: React.FC<{
           onChange={handleInputFieldChange}
           placeholder={'Ny ting'}
           fullWidth
+          autoFocus
         />
         <Stack direction={'row'} spacing={2} sx={{ paddingTop: 2 }}>
           <TextField
