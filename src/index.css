@@ -3,8 +3,8 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #023c40;
-  background-color: #f9f8f8;
+  color: #55868C;
+  background-color: #F4ECD6;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -30,7 +30,7 @@ body {
 }
 
 h1 {
-  font-size: 2em;
+  font-size: 2.5rem;
   line-height: 1.1;
 }
 h2 {

@@ -30,7 +30,7 @@ const App = () => {
     palette: {
       primary: {
         light: '#0AD3FF',
-        main: '#1F271B',
+        main: '#55868C',
         dark: '#023C40',
         contrastText: '#78FFD6',
       },
@@ -40,6 +40,9 @@ const App = () => {
         dark: '#ba000d',
         contrastText: '#000',
       },
+      warning: {
+        main: '#ef767a'
+      }
     },
     spacing: 8,
     typography: { button: { textTransform: 'none' } },
@@ -187,12 +190,10 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={'1rem'} margin={'0 .5rem'}>
-        <Grid xs={5} height={'4rem'} alignItems={'flex-end'}>
-          <h1>Jøremål</h1>
-        </Grid>
-        <Grid xs={7} height={'4rem'}>
-          <Stack direction={'row'} spacing={1} justifyContent={'flex-end'} alignItems={'flex-end'}>
+      <Grid container spacing={'1rem'} margin={'0 .5rem'} height={'4rem'}>
+        <Grid xs={hasTodos ? 5 : 12}>{hasTodos ? <h1>Jør.</h1> : <h1>Jør ettellerannet.</h1>}</Grid>
+        <Grid xs={7} container alignItems="flex-end" justifyContent={'flex-end'}>
+          <Stack direction={'row'} spacing={'1rem'} justifyContent={'flex-end'}>
             {completeTodos > 0 && (
               <Grow in={true} key="completeChip">
                 <Chip
@@ -217,7 +218,7 @@ const App = () => {
             )}
           </Stack>
         </Grid>
-        <Grid xs={12} height={'calc(100vh - 7rem)'}>
+        <Grid xs={12} height={'calc(100vh - 8rem)'} padding={0} paddingTop={'1rem'}>
           <TodoList
             todos={todos}
             toggleTodo={handleToggleTodo}
@@ -238,14 +239,21 @@ const App = () => {
         </Grid>
       </Grid>
       {!addVisible && (
-        <Fab
-          aria-label="Create"
-          color="warning"
-          sx={{ position: 'absolute', bottom: '3rem', right: '3rem' }}
-          onClick={handleAddVisible}
-        >
-          <AddTaskOutlined />
-        </Fab>
+        <>
+          {/*<SpeedDialCustom />*/}
+          <Fab
+            aria-label="Create"
+            color="warning"
+            sx={
+              hasTodos
+                ? { position: 'absolute', bottom: '3rem', right: '3rem' }
+                : { position: 'absolute', top: '7rem', right: 'calc(50% - 8rem)' }
+            }
+            onClick={handleAddVisible}
+          >
+            <AddTaskOutlined />
+          </Fab>
+        </>
       )}
       <Modal open={addVisible} onClose={handleAddVisible}>
         <TodoSubmit

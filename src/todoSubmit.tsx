@@ -1,9 +1,8 @@
 import * as React from 'react'
 import { RefObject } from 'react'
-import { Box, Stack, TextField } from '@mui/material'
+import { Box, IconButton, Stack, TextField } from '@mui/material'
 
-import { CheckOutlined } from '@mui/icons-material'
-import Button from '@mui/material/Button'
+import { AddCircle } from '@mui/icons-material'
 
 const TodoSubmit: React.FC<{
   todoNameRef: RefObject<HTMLInputElement>
@@ -28,7 +27,8 @@ const TodoSubmit: React.FC<{
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 'calc(100% - 4rem)',
-        bgcolor: 'background.paper',
+        maxWidth: '30rem',
+        bgcolor: '#EDF4ED',
         border: '1px dashed grey',
         borderRadius: 2,
         boxShadow: 24,
@@ -59,10 +59,9 @@ const TodoSubmit: React.FC<{
             placeholder={'Kommentar'}
             fullWidth
           />
-          <Button type="submit" disabled={!inputFieldValue.trim()}>
-            <CheckOutlined sx={{ paddingRight: 1 }} />
-            {['Smekk!', 'Pang!', 'Yeah!', 'Boom!', 'Pffft!'][Math.floor(Math.random() * 5)]}
-          </Button>
+          <IconButton type="submit" disabled={!inputFieldValue.trim()} title={'Opprett'} size="large" color={'warning'}>
+            <AddCircle />
+          </IconButton>
         </Stack>
       </form>
     </Box>
