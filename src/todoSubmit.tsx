@@ -24,10 +24,10 @@ const TodoSubmit: React.FC<{
     <Box
       sx={{
         position: 'absolute',
-        bottom: '3rem',
+        bottom: '4rem',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
+        width: 'calc(100% - 4rem)',
         bgcolor: 'background.paper',
         border: '1px dashed grey',
         borderRadius: 2,
@@ -59,7 +59,7 @@ const TodoSubmit: React.FC<{
             placeholder={'Kommentar'}
             fullWidth
           />
-          <Button type="submit"  disabled={!inputFieldValue.trim()}>
+          <Button type="submit" disabled={!inputFieldValue.trim()}>
             <CheckOutlined sx={{ paddingRight: 1 }} />
             {['Smekk!', 'Pang!', 'Yeah!', 'Boom!', 'Pffft!'][Math.floor(Math.random() * 5)]}
           </Button>

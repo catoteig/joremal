@@ -259,7 +259,7 @@ const TodoList: React.FC<{
             autoHideDuration={3000}
             onClose={handleSnackbarClose}
             anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-            sx={{ background: 'primary.main' }}
+            sx={{ background: 'primary.main', border: '1px dashed grey' }}
           >
             <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
               {snackbarMessage}
