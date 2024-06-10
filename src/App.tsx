@@ -218,7 +218,7 @@ const App = () => {
             )}
           </Stack>
         </Grid>
-        <Grid xs={12} height={'calc(100vh - 8rem)'} padding={0} paddingTop={'1rem'}>
+        <Grid xs={12} height={'calc(100vh - 10rem)'} padding={0} paddingTop={'1rem'}>
           <TodoList
             todos={todos}
             toggleTodo={handleToggleTodo}
