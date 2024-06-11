@@ -2,7 +2,7 @@ import './App.css'
 import TodoList from './todoList.tsx'
 import * as React from 'react'
 import { SetStateAction, useEffect, useRef, useState } from 'react'
-import { Chip, Fab, Grow, Modal, Stack, ThemeProvider } from '@mui/material'
+import { Checkbox, Chip, Fab, Grow, Modal, Stack, ThemeProvider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { AddTaskOutlined, Check, InfoOutlined } from '@mui/icons-material'
 import { createTheme } from '@mui/material/styles'
@@ -41,8 +41,8 @@ const App = () => {
         contrastText: '#000',
       },
       warning: {
-        main: '#ef767a'
-      }
+        main: '#ef767a',
+      },
     },
     spacing: 8,
     typography: { button: { textTransform: 'none' } },
@@ -56,6 +56,7 @@ const App = () => {
   const [, setWidth] = useState<number>(window.innerWidth)
   const [addVisible, setAddVisible] = React.useState<boolean>(false)
   const todoNameRef = useRef<HTMLInputElement>(null)
+  const [chipSelected, setChipSelected] = useState<string[]>([])
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth)
@@ -88,6 +89,7 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(orderAsc))
     handleFetch()
+    setChipSelected([])
   }, [orderAsc])
 
   const handleCreate = async (todo: TodoItem) => {
@@ -190,7 +192,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={'1rem'} margin={'0 .5rem'} height={'4rem'}>
+      <Grid container spacing={'1rem'} margin={'0 .5rem'} height={'4rem'} width={'calc(100vw - 2rem)'}>
         <Grid xs={hasTodos ? 5 : 12}>{hasTodos ? <h1>Jør.</h1> : <h1>Jør ettellerannet.</h1>}</Grid>
         <Grid xs={7} container alignItems="flex-end" justifyContent={'flex-end'}>
           <Stack direction={'row'} spacing={'1rem'} justifyContent={'flex-end'}>
@@ -213,7 +215,7 @@ const App = () => {
                   color={'warning'}
                   icon={<InfoOutlined />}
                   variant="outlined"
-                />
+                ></Chip>
               </Grow>
             )}
           </Stack>
