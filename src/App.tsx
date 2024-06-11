@@ -2,7 +2,7 @@ import './App.css'
 import TodoList from './todoList.tsx'
 import * as React from 'react'
 import { SetStateAction, useEffect, useRef, useState } from 'react'
-import { Checkbox, Chip, Fab, Grow, Modal, Stack, ThemeProvider } from '@mui/material'
+import { Chip, Fab, Grow, Modal, Stack, ThemeProvider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { AddTaskOutlined, Check, InfoOutlined } from '@mui/icons-material'
 import { createTheme } from '@mui/material/styles'
@@ -56,7 +56,6 @@ const App = () => {
   const [, setWidth] = useState<number>(window.innerWidth)
   const [addVisible, setAddVisible] = React.useState<boolean>(false)
   const todoNameRef = useRef<HTMLInputElement>(null)
-  const [chipSelected, setChipSelected] = useState<string[]>([])
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth)
@@ -89,7 +88,6 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(orderAsc))
     handleFetch()
-    setChipSelected([])
   }, [orderAsc])
 
   const handleCreate = async (todo: TodoItem) => {
