@@ -1,23 +1,20 @@
-import * as React from 'react'
 import { RefObject } from 'react'
 import { Box, IconButton, Stack, TextField } from '@mui/material'
 import { Send } from '@mui/icons-material'
 
-const TodoSubmit: React.FC<{
+export interface TodoSubmitProps {
   todoNameRef: RefObject<HTMLInputElement>
   inputFieldValue: string
   noteFieldValue: string
   onFormSubmit: any
   handleInputFieldChange: any
   handleNoteFieldChange: any
-}> = ({
-  todoNameRef,
-  inputFieldValue,
-  noteFieldValue,
-  handleNoteFieldChange,
-  onFormSubmit,
-  handleInputFieldChange,
-}) => {
+}
+
+const TodoSubmit = (props: TodoSubmitProps) => {
+  const { todoNameRef, inputFieldValue, noteFieldValue, handleNoteFieldChange, onFormSubmit, handleInputFieldChange } =
+    props
+
   return (
     <Box
       sx={{

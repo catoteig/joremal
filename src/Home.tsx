@@ -25,7 +25,7 @@ export type TodoItem = {
   updated: null | firestore.Timestamp
 }
 
-const Home: React.FC = () => {
+const Home = () => {
   theme()
   const [todos, setTodos] = useState<TodoItem[]>([])
   const [inputFieldValue, setInputFieldValue] = useState<string>('')
@@ -170,7 +170,7 @@ const Home: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <Grid container spacing={'1rem'} margin={'0 1rem'} height={'4rem'} width={'calc(100vw - 2rem)'} maxWidth={'400px'}>
-        <Grid xs={hasTodos ? 5 : 12}>{hasTodos ? <h1>J</h1> : <h1>Jør ettellerannet.</h1>}</Grid>
+        <Grid xs={hasTodos ? 5 : 12}><h1>J</h1></Grid>
         <Grid xs={7} container alignItems="flex-end" justifyContent={'flex-end'}>
           <Stack direction={'row'} spacing={'1rem'} justifyContent={'flex-end'}>
             {completeTodos > 0 && (
@@ -197,7 +197,7 @@ const Home: React.FC = () => {
             )}
           </Stack>
         </Grid>
-        <Grid xs={12} height={'calc(100vh - 10rem)'} padding={0} paddingTop={'1rem'}>
+        <Grid xs={12} maxHeight={'calc(100vh - 10rem)'} padding={0} paddingTop={'1rem'}>
           <TodoList
             todos={todos}
             toggleTodo={handleToggleTodo}
