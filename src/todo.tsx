@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { TodoItem } from './App.tsx'
+import { TodoItem } from './Home.tsx'
 import { Checkbox, ListItem, ListItemText } from '@mui/material'
 
 const Todo: React.FC<{

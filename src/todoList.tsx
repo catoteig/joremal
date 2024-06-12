@@ -30,7 +30,7 @@ import {
   KeyboardArrowDown,
   SortByAlphaOutlined,
 } from '@mui/icons-material'
-import { TodoItem } from './App.tsx'
+import { TodoItem } from './Home.tsx'
 
 const TodoList: React.FC<{
   todos: TodoItem[]

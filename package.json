@@ -14,15 +14,19 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@firebase/firestore-types": "^3.0.2",
     "@fontsource/roboto": "^5.0.13",
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
     "firebase": "^10.12.2",
     "firebase-tools": "^13.11.2",
-    "@firebase/firestore-types": "^3.0.2",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.4",
     "material-ui-popup-state": "^5.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1",
+    "sort-by": "^1.2.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

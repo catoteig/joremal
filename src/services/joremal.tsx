@@ -1,6 +1,6 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, query, orderBy } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, setDoc } from 'firebase/firestore'
 import { getDb } from './db.tsx'
-import { TodoItem } from '../App.tsx'
+import { TodoItem } from '../Home.tsx'
 
 export const collectionName = 'joremal'
 

@@ -1,6 +1,6 @@
 #root {
   max-width: 500px;
-  margin: 0 auto;
+  margin: 0;
   padding-top: 2rem;
   text-align: left;
 }
@@ -10,6 +10,8 @@ h1 {
   font-family: "Pacifico", cursive;
   font-weight: 400;
   font-style: normal;
+  -webkit-text-stroke: 2px #000000;
+  -webkit-text-fill-color: #ef767a;
 }
 
 .logo {
