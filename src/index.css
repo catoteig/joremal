@@ -3,7 +3,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #55868C;
+  color: #000000;
   background-color: #F4ECD6;
 
   font-synthesis: none;
@@ -27,6 +27,7 @@ body {
   place-items: flex-start;
   min-width: 320px;
   min-height: 100vh;
+  justify-content: center;
 }
 
 h1 {
@@ -45,12 +46,13 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #ef767a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
-  border-color: #646cff;
+  border-color: #ef767a;
 }
 button:focus,
 button:focus-visible {

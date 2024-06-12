@@ -169,7 +169,7 @@ const Home: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={'1rem'} margin={'0 1rem'} height={'4rem'} width={'calc(100vw - 2rem)'}>
+      <Grid container spacing={'1rem'} margin={'0 1rem'} height={'4rem'} width={'calc(100vw - 2rem)'} maxWidth={'400px'}>
         <Grid xs={hasTodos ? 5 : 12}>{hasTodos ? <h1>J</h1> : <h1>Jør ettellerannet.</h1>}</Grid>
         <Grid xs={7} container alignItems="flex-end" justifyContent={'flex-end'}>
           <Stack direction={'row'} spacing={'1rem'} justifyContent={'flex-end'}>

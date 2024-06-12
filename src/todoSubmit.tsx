@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { RefObject } from 'react'
 import { Box, IconButton, Stack, TextField } from '@mui/material'
-
-import { AddCircle } from '@mui/icons-material'
+import { Send } from '@mui/icons-material'
 
 const TodoSubmit: React.FC<{
   todoNameRef: RefObject<HTMLInputElement>
@@ -36,33 +35,40 @@ const TodoSubmit: React.FC<{
       }}
     >
       <form onSubmit={onFormSubmit}>
-        <TextField
-          sx={{ paddingTop: 1 }}
-          variant="standard"
-          id="todoInput"
-          ref={todoNameRef}
-          type="text"
-          value={inputFieldValue}
-          onChange={handleInputFieldChange}
-          placeholder={'Ny ting'}
-          fullWidth
-          autoFocus
-        />
-        <Stack direction={'row'} spacing={2} sx={{ paddingTop: 2 }}>
+        <Stack direction={'column'} spacing={2} sx={{ paddingTop: 2 }}>
           <TextField
-            variant="standard"
+            label={'Jør'}
+            variant="outlined"
+            id="todoInput"
+            ref={todoNameRef}
+            type="text"
+            value={inputFieldValue}
+            onChange={handleInputFieldChange}
+            fullWidth
+            autoFocus
+          />
+          <TextField
+            label={'Kommentar'}
+            variant="outlined"
             id="todoComment"
             ref={todoNameRef}
             type="text"
             value={noteFieldValue}
             onChange={handleNoteFieldChange}
-            placeholder={'Kommentar'}
             fullWidth
           />
-          <IconButton type="submit" disabled={!inputFieldValue.trim()} title={'Opprett'} size="large" color={'warning'}>
-            <AddCircle />
-          </IconButton>
         </Stack>
+        <Box flexDirection={'column'} textAlign={'right'}>
+          <IconButton
+            type="submit"
+            disabled={!inputFieldValue.trim()}
+            title={'Opprett'}
+            size="large"
+            sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white' }}
+          >
+            <Send />
+          </IconButton>
+        </Box>
       </form>
     </Box>
   )
