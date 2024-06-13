@@ -238,7 +238,7 @@ const TodoList = (props: TodoListProps) => {
                           role={undefined}
                           onClick={handleTodoClick}
                           dense
-                          sx={{ alignItems: 'flex-start' }}
+                          sx={{ alignItems: 'center' }}
                         >
                           <ListItemIcon>
                             <Checkbox
@@ -254,17 +254,16 @@ const TodoList = (props: TodoListProps) => {
                           </ListItemIcon>
                           <Grid sx={{ padding: 0 }} width={'100%'} height={'100%'}>
                             {todo.notes && <ListItemText id={labelId} primary={todo.notes} />}
-                            {todo.list && (
+                            {todo.list.length > 0 && (
                               <Grid container spacing={1} flex={'auto'} direction={'row'} padding={0}>
-                                {todo.list &&
-                                  todo.list.map((e) => (
-                                    <Grid>
-                                      <Chip label={e} color={'warning'} variant={'outlined'} />
-                                    </Grid>
-                                  ))}
+                                {todo.list.map((e) => (
+                                  <Grid>
+                                    <Chip label={e} color={'warning'} variant={'outlined'} />
+                                  </Grid>
+                                ))}
                               </Grid>
                             )}
-                            {(todo.notes || todo.list) && <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>}
+                            {(todo.notes || todo.list.length > 0) && <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>}
                             <ListItemText
                               sx={{ fontStyle: 'italic', margin: 0, marginTop: 0 }}
                               id={labelId}
