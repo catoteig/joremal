@@ -18,7 +18,7 @@ export type TodoItem = {
   name: string
   complete: boolean
   notes: string
-  list: []
+  list: string[]
   created: firestore.Timestamp
   updated: null | firestore.Timestamp
 }
@@ -32,6 +32,7 @@ const Home = () => {
 
   const [inputFieldValue, setInputFieldValue] = useState<string>('')
   const [noteFieldValue, setNoteFieldValue] = useState<string>('')
+  const [assigneeFieldValue, setAssigneeFieldValue] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [, setWidth] = useState<number>(window.innerWidth)
   const [addVisible, setAddVisible] = React.useState<boolean>(false)
@@ -124,6 +125,7 @@ const Home = () => {
       notes: noteFieldValue,
       // @ts-expect-error Created datatype
       created: new Date(),
+      list: assigneeFieldValue,
     }
     handleCreate(newTodo).then(() => handleFetch())
     setInputFieldValue('')
@@ -153,7 +155,7 @@ const Home = () => {
       complete: false,
       notes: fakerNB_NO.word.words(15),
       created: new Date(),
-      list: []
+      list: Array.from({ length: fakerNB_NO.number.int({ min: 5, max: 5 }) }).map(() => fakerNB_NO.person.firstName()),
     }))
     fbCreate(todoItems).then(() => handleFetch())
   }
@@ -169,6 +171,9 @@ const Home = () => {
   }
   const handleNoteFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
     setNoteFieldValue(event.target.value)
+  }
+  const handleAssigneeFieldChange = (event: { target: { value: SetStateAction<string[]> } }) => {
+    setAssigneeFieldValue(event.target.value)
   }
 
   const { incompleteTodos, completeTodos } = todos.reduce(
@@ -198,7 +203,17 @@ const Home = () => {
         <Grid xs={hasTodos ? 5 : 12}>
           <h1>J</h1>
         </Grid>
-        <Grid xs={7} container alignItems="flex-end" justifyContent={'flex-end'}>
+        <Grid
+          xs={7}
+          container
+          alignItems="flex-end"
+          justifyContent={'flex-end'}
+          sx={{
+            '& .MuiChip-filled': {
+              color: 'white',
+            },
+          }}
+        >
           <Stack direction={'row'} spacing={'0.5rem'} justifyContent={'flex-end'}>
             {/*{todoFilter !== null && (*/}
             {/*  <Grow in={true} key="clearFilter">*/}
@@ -276,6 +291,8 @@ const Home = () => {
           onFormSubmit={onFormSubmit}
           handleInputFieldChange={handleInputFieldChange}
           handleNoteFieldChange={handleNoteFieldChange}
+          handleAssigneFieldChange={handleAssigneeFieldChange}
+          assigneeFieldValue={assigneeFieldValue}
         />
       </Modal>
     </>

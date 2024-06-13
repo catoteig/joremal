@@ -1,6 +1,8 @@
 import { RefObject } from 'react'
-import { Box, IconButton, Stack, TextField } from '@mui/material'
+import { Box, Chip, IconButton, Stack, TextField } from '@mui/material'
 import { SentIcon } from 'hugeicons-react'
+import Grid from '@mui/material/Unstable_Grid2'
+import { allUsers } from './users.tsx'
 
 export interface TodoSubmitProps {
   todoNameRef: RefObject<HTMLInputElement>
@@ -9,6 +11,8 @@ export interface TodoSubmitProps {
   onFormSubmit: any
   handleInputFieldChange: any
   handleNoteFieldChange: any
+  assigneeFieldValue: string[]
+  handleAssigneFieldChange: any
 }
 
 const TodoSubmit = (props: TodoSubmitProps) => {
@@ -54,6 +58,24 @@ const TodoSubmit = (props: TodoSubmitProps) => {
             onChange={handleNoteFieldChange}
             fullWidth
           />
+          <Grid
+            container
+            spacing={1}
+            flex={'auto'}
+            direction={'row'}
+            padding={0}
+            sx={{
+              '& .MuiChip-filled': {
+                color: 'white',
+              },
+            }}
+          >
+            {allUsers && allUsers.map((user) => (
+              <Grid>
+                <Chip label={user.name} color={'warning'} variant={'outlined'}/>
+              </Grid>
+            ))}
+          </Grid>
         </Stack>
         <Box flexDirection={'column'} textAlign={'right'}>
           <IconButton

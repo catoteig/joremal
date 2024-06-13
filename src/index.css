@@ -4,7 +4,7 @@
 
   color-scheme: light dark;
   color: #000000;
-  background-color: #F4ECD6;
+  background-color: #f4ecd6;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -74,4 +74,8 @@ input {
   button {
     background-color: #f9f9f9;
   }
+}
+
+& .MuiChip-filled {
+  color: white;
 }

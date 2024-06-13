@@ -235,8 +235,8 @@ const TodoList = (props: TodoListProps) => {
                         disablePadding
                         color=""
                       >
-                        <ListItemButton role={undefined} onClick={handleTodoClick} dense>
-                          <ListItemIcon>
+                        <ListItemButton role={undefined} onClick={handleTodoClick} dense sx={{alignItems: 'flex-start'}}>
+                          <ListItemIcon >
                             <Checkbox
                               icon={<SquareIcon />}
                               checkedIcon={<CheckmarkSquare02Icon />}
@@ -251,9 +251,14 @@ const TodoList = (props: TodoListProps) => {
                           <Grid sx={{ padding: 0 }} width={'100%'} height={'100%'}>
                             {todo.notes && <ListItemText id={labelId} primary={todo.notes} />}
                             {todo.list && (
-                              <Stack direction={'row'} spacing={'0.5rem'}>
-                                {todo.list && todo.list.map((e) => <Chip label={e} color={'warning'} />)}
-                              </Stack>
+                              <Grid container spacing={1} flex={'auto'} direction={'row'} padding={0}>
+                                {todo.list &&
+                                  todo.list.map((e) => (
+                                    <Grid>
+                                      <Chip label={e} color={'warning'} variant={'outlined'} />
+                                    </Grid>
+                                  ))}
+                              </Grid>
                             )}
                             {(todo.notes || todo.list) && <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>}
                             <ListItemText
