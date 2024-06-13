@@ -10,7 +10,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import TodoList from './todoList.tsx'
 import TodoSubmit from './todoSubmit.tsx'
 import firebase from 'firebase/compat/app'
-import { CarrotIcon, NoteAddIcon, Tick02Icon } from 'hugeicons-react'
+import { Award04Icon, Idea01Icon, NoteAddIcon } from 'hugeicons-react'
 import firestore = firebase.firestore
 
 export type TodoItem = {
@@ -227,7 +227,7 @@ const Home = () => {
                 component={'button'}
                 variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
                 onClick={todoFilter === 'complete' ? clearFilter : setFilterComplete}
-                icon={<Tick02Icon />}
+                icon={<Award04Icon />}
                 label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
                   completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
                 }`}
@@ -239,7 +239,7 @@ const Home = () => {
                 component={'button'}
                 variant={todoFilter === 'incomplete' ? 'filled' : 'outlined'}
                 onClick={todoFilter === 'incomplete' ? clearFilter : setFilterIncomplete}
-                icon={<CarrotIcon />}
+                icon={<Idea01Icon />}
                 label={`${incompleteTodos} ugjort${incompleteTodos === 1 ? '' : 'e'}`}
                 color={'warning'}
               ></Chip>

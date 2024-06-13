@@ -21,8 +21,6 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'
 import { TodoItem } from './Home.tsx'
 import {
-  ArrangeByLettersAZIcon,
-  ArrangeByLettersZAIcon,
   ArrowDown01Icon,
   CheckListIcon,
   CheckmarkSquare02Icon,
@@ -30,6 +28,7 @@ import {
   Logout03Icon,
   NoteAddIcon,
   RowDeleteIcon,
+  SortingAZ01Icon,
   SquareIcon,
   Tick02Icon,
   ZapIcon,
@@ -163,7 +162,7 @@ const TodoList = (props: TodoListProps) => {
                   <RowDeleteIcon />
                 </IconButton>
                 <IconButton onClick={handleOrderBy} title={'Sorter'}>
-                  {orderAsc ? <ArrangeByLettersZAIcon /> : <ArrangeByLettersAZIcon />}
+                  <SortingAZ01Icon />
                 </IconButton>
                 <IconButton onClick={handleRandom} title={'Lag tulleoppgaver'}>
                   <ZapIcon />
@@ -235,8 +234,13 @@ const TodoList = (props: TodoListProps) => {
                         disablePadding
                         color=""
                       >
-                        <ListItemButton role={undefined} onClick={handleTodoClick} dense sx={{alignItems: 'flex-start'}}>
-                          <ListItemIcon >
+                        <ListItemButton
+                          role={undefined}
+                          onClick={handleTodoClick}
+                          dense
+                          sx={{ alignItems: 'flex-start' }}
+                        >
+                          <ListItemIcon>
                             <Checkbox
                               icon={<SquareIcon />}
                               checkedIcon={<CheckmarkSquare02Icon />}
