@@ -1,6 +1,6 @@
 import { RefObject } from 'react'
 import { Box, IconButton, Stack, TextField } from '@mui/material'
-import { Send } from '@mui/icons-material'
+import { SentIcon } from 'hugeicons-react'
 
 export interface TodoSubmitProps {
   todoNameRef: RefObject<HTMLInputElement>
@@ -63,7 +63,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
             size="large"
             sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white' }}
           >
-            <Send />
+            <SentIcon />
           </IconButton>
         </Box>
       </form>

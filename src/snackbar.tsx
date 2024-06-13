@@ -2,7 +2,7 @@ import * as React from 'react'
 import Button from '@mui/material/Button'
 import Snackbar, { SnackbarProps } from '@mui/material/Snackbar'
 import IconButton from '@mui/material/IconButton'
-import CloseIcon from '@mui/icons-material/Close'
+import { Cancel01Icon } from 'hugeicons-react'
 
 export interface SnackbarPropsExt extends SnackbarProps {
   message: string
@@ -27,7 +27,7 @@ const SimpleSnackbar = (props: SnackbarPropsExt) => {
   const action = (
     <React.Fragment>
       <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-        <CloseIcon fontSize="small" />
+        <Cancel01Icon fontSize="small" />
       </IconButton>
     </React.Fragment>
   )

@@ -1,20 +1,19 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, setDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDocs, query, setDoc } from 'firebase/firestore'
 import { getDb } from './db.tsx'
 import { TodoItem } from '../Home.tsx'
 
 export const collectionName = 'joremal'
 
-export const fbGetAll = async (orderAsc: boolean): Promise<TodoItem[]> => {
-  const q = query(collection(getDb(), collectionName), orderBy('name', orderAsc ? 'asc' : 'desc'))
+export const fbGetAll = async (): Promise<TodoItem[]> => {
+  const q = query(collection(getDb(), collectionName))
   const doc_refs = await getDocs(q)
 
   const res: TodoItem[] = []
 
   doc_refs.forEach((todo) => {
-    const { name, complete, notes, created, updated } = todo.data() as TodoItem
-    res.push({ id: todo.id, name: name, complete: complete, notes: notes, created: created, updated: updated })
+    const { name, complete, notes, created, updated, list } = todo.data() as TodoItem
+    res.push({ id: todo.id, name: name, complete: complete, notes: notes, created: created, updated: updated, list: list })
   })
-
   return res
 }
 

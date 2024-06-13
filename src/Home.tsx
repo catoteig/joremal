@@ -5,37 +5,36 @@ import { fbCreate, fbDelete, fbGetAll, fbUpdate } from './services/joremal.tsx'
 import { capitalize } from './helpers.ts'
 import { v4 } from 'uuid'
 import { fakerNB_NO } from '@faker-js/faker'
-import { Chip, Fab, Grow, IconButton, Modal, Stack, ThemeProvider } from '@mui/material'
+import { Chip, Fab, Grow, Modal, Stack } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { AddTaskOutlined, Check, Clear, InfoOutlined } from '@mui/icons-material'
 import TodoList from './todoList.tsx'
 import TodoSubmit from './todoSubmit.tsx'
 import firebase from 'firebase/compat/app'
-import theme from './theme.tsx'
+import { CarrotIcon, NoteAddIcon, Tick02Icon } from 'hugeicons-react'
 import firestore = firebase.firestore
-
-const LOCAL_STORAGE_KEY = 'todoApp.orderAsc'
 
 export type TodoItem = {
   id: string
   name: string
   complete: boolean
   notes: string
+  list: []
   created: firestore.Timestamp
   updated: null | firestore.Timestamp
 }
 export type TodoFilter = 'complete' | 'incomplete' | null
 
 const Home = () => {
-  theme()
   const [todos, setTodos] = useState<TodoItem[]>([])
+  const [todosWithFilterAndSort, setTodosWithFilterAndSort] = useState<TodoItem[]>([])
+  const [todoFilter, setTodoFilter] = React.useState<TodoFilter>(null)
+  const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
+
   const [inputFieldValue, setInputFieldValue] = useState<string>('')
   const [noteFieldValue, setNoteFieldValue] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
-  const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
   const [, setWidth] = useState<number>(window.innerWidth)
   const [addVisible, setAddVisible] = React.useState<boolean>(false)
-  const [todoFilter, setTodoFilter] = React.useState<TodoFilter>(null)
   const todoNameRef = useRef<HTMLInputElement>(null)
 
   function handleWindowSizeChange() {
@@ -51,31 +50,36 @@ const Home = () => {
   // const isMobile = width <= 768
 
   useEffect(() => {
-    const orderAscLocal = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string) === 'true'
-    if (orderAscLocal) setOrderAsc(orderAscLocal)
+    handleFetch()
   }, [])
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(orderAsc))
-    handleFetch()
-  }, [orderAsc])
-
-  useEffect(() => {
-    handleFetch()
-  }, [todoFilter])
+    handleTodoFilterAndSort()
+  }, [todoFilter, todos, orderAsc])
 
   const handleAddVisible = () => {
     setAddVisible(!addVisible)
   }
 
+  const handleTodoFilterAndSort = () => {
+    let filtered: TodoItem[] = []
+    if (todoFilter === 'complete') {
+      filtered = todos.filter((t) => t.complete)
+    } else if (todoFilter === 'incomplete') {
+      filtered = todos.filter((t) => !t.complete)
+    } else if (todoFilter === null) {
+      filtered = todos
+    }
+    setTodosWithFilterAndSort(
+      filtered.sort((a, b) => (orderAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
+    )
+  }
+
   const handleFetch = () => {
-    fbGetAll(orderAsc).then((res) => {
-      const todos = [...res]
-      if (todoFilter === 'complete') setTodos(todos.filter((t) => t.complete))
-      if (todoFilter === 'incomplete') setTodos(todos.filter((t) => !t.complete))
-      if (todoFilter === null) setTodos(todos)
-      setLoading(false)
-    })
+    fbGetAll()
+      .then((res) => setTodos([...res]))
+      .then(() => handleTodoFilterAndSort())
+    setLoading(false)
   }
 
   const handleCreate = async (todo: TodoItem) => {
@@ -149,6 +153,7 @@ const Home = () => {
       complete: false,
       notes: fakerNB_NO.word.words(15),
       created: new Date(),
+      list: []
     }))
     fbCreate(todoItems).then(() => handleFetch())
   }
@@ -181,7 +186,7 @@ const Home = () => {
   const clearFilter = () => setTodoFilter(null)
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Grid
         container
         spacing={'1rem'}
@@ -195,44 +200,40 @@ const Home = () => {
         </Grid>
         <Grid xs={7} container alignItems="flex-end" justifyContent={'flex-end'}>
           <Stack direction={'row'} spacing={'0.5rem'} justifyContent={'flex-end'}>
-            {todoFilter !== null && (
-              <Grow in={true} key="clearFilter">
-                <IconButton component={'button'} onClick={clearFilter} size={'small'} sx={{ p: '0 5px' }}>
-                  <Clear />
-                </IconButton>
-              </Grow>
-            )}{' '}
-            {completeTodos > 0 && (
-              <Grow in={true} key="completeChip">
-                <Chip
-                  component={todoFilter === null ? 'button' : 'div'}
-                  variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
-                  onClick={todoFilter === null ? setFilterComplete : undefined}
-                  icon={<Check />}
-                  label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
-                    completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
-                  }`}
-                  color={'success'}
-                />
-              </Grow>
-            )}
-            {incompleteTodos > 0 && (
-              <Grow in={true} key="incompleteChip">
-                <Chip
-                  component={todoFilter === null ? 'button' : 'div'}
-                  variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
-                  onClick={todoFilter === null ? setFilterIncomplete : undefined}
-                  icon={<InfoOutlined />}
-                  label={`${incompleteTodos} ugjort${incompleteTodos === 1 ? '' : 'e'}`}
-                  color={'warning'}
-                ></Chip>
-              </Grow>
-            )}
+            {/*{todoFilter !== null && (*/}
+            {/*  <Grow in={true} key="clearFilter">*/}
+            {/*    <IconButton component={'button'} onClick={clearFilter} size={'small'} sx={{ p: '0 5px' }}>*/}
+            {/*      <Clear />*/}
+            {/*    </IconButton>*/}
+            {/*  </Grow>*/}
+            {/*)}*/}
+            <Grow in={true} key="completeChip">
+              <Chip
+                component={'button'}
+                variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
+                onClick={todoFilter === 'complete' ? clearFilter : setFilterComplete}
+                icon={<Tick02Icon />}
+                label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
+                  completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
+                }`}
+                color={'success'}
+              />
+            </Grow>
+            <Grow in={true} key="incompleteChip">
+              <Chip
+                component={'button'}
+                variant={todoFilter === 'incomplete' ? 'filled' : 'outlined'}
+                onClick={todoFilter === 'incomplete' ? clearFilter : setFilterIncomplete}
+                icon={<CarrotIcon />}
+                label={`${incompleteTodos} ugjort${incompleteTodos === 1 ? '' : 'e'}`}
+                color={'warning'}
+              ></Chip>
+            </Grow>
           </Stack>
         </Grid>
         <Grid xs={12} maxHeight={'calc(100vh - 10rem)'} padding={0} paddingTop={'1rem'}>
           <TodoList
-            todos={todos}
+            todos={todosWithFilterAndSort}
             toggleTodo={handleToggleTodo}
             removeTodo={handleRemoveTodo}
             toggleAllTodos={handleToggleAllTodos}
@@ -263,7 +264,7 @@ const Home = () => {
             }
             onClick={handleAddVisible}
           >
-            <AddTaskOutlined />
+            <NoteAddIcon />
           </Fab>
         </>
       )}
@@ -277,7 +278,7 @@ const Home = () => {
           handleNoteFieldChange={handleNoteFieldChange}
         />
       </Modal>
-    </ThemeProvider>
+    </>
   )
 }
 

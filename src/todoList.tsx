@@ -6,6 +6,7 @@ import {
   Alert,
   Box,
   Checkbox,
+  Chip,
   CircularProgress,
   Container,
   Divider,
@@ -18,19 +19,21 @@ import {
   Stack,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import {
-  AddTaskOutlined,
-  BoltOutlined,
-  Check,
-  CheckBoxOutlineBlankOutlined,
-  CheckBoxOutlined,
-  DeleteForever,
-  DeleteSweepOutlined,
-  KeyboardArrowDown,
-  Logout,
-  SortByAlphaOutlined,
-} from '@mui/icons-material'
 import { TodoItem } from './Home.tsx'
+import {
+  ArrangeByLettersAZIcon,
+  ArrangeByLettersZAIcon,
+  ArrowDown01Icon,
+  CheckListIcon,
+  CheckmarkSquare02Icon,
+  Delete04Icon,
+  Logout03Icon,
+  NoteAddIcon,
+  RowDeleteIcon,
+  SquareIcon,
+  Tick02Icon,
+  ZapIcon,
+} from 'hugeicons-react'
 
 export interface TodoListProps {
   todos: TodoItem[]
@@ -146,36 +149,31 @@ const TodoList = (props: TodoListProps) => {
               height={'3.3rem'}
             >
               <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
+                <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible} title={'Opprett'}>
+                  <NoteAddIcon />
+                </IconButton>
                 <IconButton
                   onClick={handleToggleAll}
                   disabled={!hasTodos}
                   title={hasIncompleteTodos ? 'Fjern alle kryss' : 'Kryss av alle'}
                 >
-                  {hasIncompleteTodos ? <CheckBoxOutlineBlankOutlined /> : <CheckBoxOutlined />}
+                  {hasIncompleteTodos ? <SquareIcon /> : <CheckListIcon />}
                 </IconButton>
                 <IconButton onClick={handleRemoveAllClick} disabled={!completeTodos} title={'Slett utførte'}>
-                  <DeleteSweepOutlined />
+                  <RowDeleteIcon />
                 </IconButton>
                 <IconButton onClick={handleOrderBy} title={'Sorter'}>
-                  <SortByAlphaOutlined />
+                  {orderAsc ? <ArrangeByLettersZAIcon /> : <ArrangeByLettersAZIcon />}
                 </IconButton>
                 <IconButton onClick={handleRandom} title={'Lag tulleoppgaver'}>
-                  <BoltOutlined />
+                  <ZapIcon />
                 </IconButton>
-                <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible} title={'Opprett'}>
-                  <AddTaskOutlined />
-                </IconButton>
-                <IconButton title={'Logg ut'}>
-                  <Logout />
+                <IconButton title={'Logg ut'} disabled>
+                  <Logout03Icon />
                 </IconButton>
               </Stack>
             </Grid>
-            <Grid
-              xs={12}
-              sx={{ padding: 0}}
-              height={'calc(100% - 3.3rem)'}
-              overflow={'auto'}
-            >
+            <Grid xs={12} sx={{ padding: 0 }} height={'calc(100% - 3.3rem)'} overflow={'auto'}>
               {todos.map((todo) => {
                 const labelId = `checkbox-list-label-${todo.id}`
                 const handleTodoClick = () => handleToggle(todo.id)
@@ -189,6 +187,7 @@ const TodoList = (props: TodoListProps) => {
                   <CircularProgress />
                 ) : (
                   <Accordion
+                    key={todo.id}
                     disableGutters
                     elevation={0}
                     sx={{
@@ -204,9 +203,13 @@ const TodoList = (props: TodoListProps) => {
                       sx={{
                         backgroundColor: todo.complete ? '#BDCCA48C' : 'transparent',
                       }}
-                      expandIcon={<KeyboardArrowDown />}
+                      expandIcon={<ArrowDown01Icon />}
                     >
-                      {todo.complete ? <Check sx={{ paddingRight: 1 }} /> : <></>}
+                      {todo.complete ? (
+                        <ListItemIcon children={<Tick02Icon />} sx={{ minWidth: '0', paddingRight: '0.5rem' }} />
+                      ) : (
+                        <></>
+                      )}
                       <ListItemText id={labelId} primary={todo.name} />
                     </AccordionSummary>
                     <AccordionDetails
@@ -225,7 +228,7 @@ const TodoList = (props: TodoListProps) => {
                               onClick={() => handleRemoveClick(todo)}
                               id={'listItemDropdown'}
                             >
-                              <DeleteForever color="disabled" />
+                              <Delete04Icon color="disabled" />
                             </IconButton>
                           </Stack>
                         }
@@ -235,6 +238,8 @@ const TodoList = (props: TodoListProps) => {
                         <ListItemButton role={undefined} onClick={handleTodoClick} dense>
                           <ListItemIcon>
                             <Checkbox
+                              icon={<SquareIcon />}
+                              checkedIcon={<CheckmarkSquare02Icon />}
                               edge="start"
                               checked={todo.complete}
                               tabIndex={-1}
@@ -244,24 +249,18 @@ const TodoList = (props: TodoListProps) => {
                             />
                           </ListItemIcon>
                           <Grid sx={{ padding: 0 }} width={'100%'} height={'100%'}>
-                            {todo.notes && (
-                              <>
-                                <ListItemText id={labelId} primary={todo.notes} />
-                                <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
-                              </>
+                            {todo.notes && <ListItemText id={labelId} primary={todo.notes} />}
+                            {todo.list && (
+                              <Stack direction={'row'} spacing={'0.5rem'}>
+                                {todo.list && todo.list.map((e) => <Chip label={e} color={'warning'} />)}
+                              </Stack>
                             )}
+                            {(todo.notes || todo.list) && <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>}
                             <ListItemText
                               sx={{ fontStyle: 'italic', margin: 0, marginTop: 0 }}
                               id={labelId}
                               primary={`${created}${updatedString}`}
                             />
-                            {/*{updated && (*/}
-                            {/*  <ListItemText*/}
-                            {/*    sx={{ fontStyle: 'italic', margin: 0 }}*/}
-                            {/*    id={labelId}*/}
-                            {/*    primary={`Oppdatert ${updated}`}*/}
-                            {/*  />*/}
-                            {/*)}*/}
                           </Grid>
                         </ListItemButton>
                       </ListItem>
