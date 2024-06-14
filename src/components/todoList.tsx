@@ -19,7 +19,7 @@ import {
   Stack,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { TodoItem } from './Home.tsx'
+import { TodoItem } from '../Home.tsx'
 import {
   ArrowDown01Icon,
   CheckListIcon,

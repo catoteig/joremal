@@ -2,7 +2,7 @@ import { RefObject } from 'react'
 import { Box, Chip, IconButton, Stack, TextField } from '@mui/material'
 import { SentIcon } from 'hugeicons-react'
 import Grid from '@mui/material/Unstable_Grid2'
-import { allUsers } from './users.tsx'
+import { allUsers } from '../users.tsx'
 
 export interface TodoSubmitProps {
   todoNameRef: RefObject<HTMLInputElement>
