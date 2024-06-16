@@ -10,7 +10,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import TodoList from './components/todoList.tsx'
 import TodoSubmit from './components/todoSubmit.tsx'
 import firebase from 'firebase/compat/app'
-import { Award04Icon, EyeIcon, NoteAddIcon } from 'hugeicons-react'
+import { Award04Icon, NoteAddIcon, WorkoutKickingIcon } from 'hugeicons-react'
 import firestore = firebase.firestore
 
 export type TodoItem = {
@@ -28,11 +28,12 @@ const Home = () => {
   const [todos, setTodos] = useState<TodoItem[]>([])
   const [todosWithFilterAndSort, setTodosWithFilterAndSort] = useState<TodoItem[]>([])
   const [todoFilter, setTodoFilter] = React.useState<TodoFilter>(null)
+  const [tagFilter, setTagFilter] = React.useState<string[]>([])
   const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
 
   const [inputFieldValue, setInputFieldValue] = useState<string>('')
   const [noteFieldValue, setNoteFieldValue] = useState<string>('')
-  const [assigneeFieldValue, setAssigneeFieldValue] = useState<string[]>([])
+  const [tagInputListValue, setTagInputListValue] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [, setWidth] = useState<number>(window.innerWidth)
   const [addVisible, setAddVisible] = React.useState<boolean>(false)
@@ -56,7 +57,7 @@ const Home = () => {
 
   useEffect(() => {
     handleTodoFilterAndSort()
-  }, [todoFilter, todos, orderAsc])
+  }, [todoFilter, todos, orderAsc, tagFilter])
 
   const handleAddVisible = () => {
     setAddVisible(!addVisible)
@@ -71,9 +72,10 @@ const Home = () => {
     } else if (todoFilter === null) {
       filtered = todos
     }
-    setTodosWithFilterAndSort(
-      filtered.sort((a, b) => (orderAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
-    )
+
+    filtered = filtered.sort((a, b) => (orderAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
+    if (tagFilter.length > 0) filtered = filtered.filter((todo) => tagFilter.some((tag) => todo.list.includes(tag)))
+    setTodosWithFilterAndSort(filtered)
   }
 
   const handleFetch = () => {
@@ -125,7 +127,7 @@ const Home = () => {
       notes: noteFieldValue,
       // @ts-expect-error Created datatype
       created: new Date(),
-      list: assigneeFieldValue,
+      list: tagInputListValue,
     }
     handleCreate(newTodo).then(() => handleFetch())
     setInputFieldValue('')
@@ -155,7 +157,7 @@ const Home = () => {
       complete: false,
       notes: fakerNB_NO.word.words(15),
       created: new Date(),
-      list: Array.from({ length: fakerNB_NO.number.int({ min: 5, max: 5 }) }).map(() => fakerNB_NO.person.firstName()),
+      list: Array.from({ length: fakerNB_NO.number.int({ min: 0, max: 5 }) }).map(() => fakerNB_NO.person.firstName()),
     }))
     fbCreate(todoItems).then(() => handleFetch())
   }
@@ -164,6 +166,7 @@ const Home = () => {
     e.preventDefault()
     handleAddTodo()
     handleAddVisible()
+    setTagInputListValue([])
   }
 
   const handleInputFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
@@ -172,8 +175,8 @@ const Home = () => {
   const handleNoteFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
     setNoteFieldValue(event.target.value)
   }
-  const handleAssigneeFieldChange = (event: { target: { value: SetStateAction<string[]> } }) => {
-    setAssigneeFieldValue(event.target.value)
+  const handleTagInputListValue = (val: string[]) => {
+    setTagInputListValue(val)
   }
 
   const { incompleteTodos, completeTodos } = todos.reduce(
@@ -239,8 +242,8 @@ const Home = () => {
                 component={'button'}
                 variant={todoFilter === 'incomplete' ? 'filled' : 'outlined'}
                 onClick={todoFilter === 'incomplete' ? clearFilter : setFilterIncomplete}
-                icon={<EyeIcon />}
-                label={`${incompleteTodos} ugjort${incompleteTodos === 1 ? '' : 'e'}`}
+                icon={<WorkoutKickingIcon />}
+                label={`${incompleteTodos} uferdig${incompleteTodos === 1 ? '' : 'e'}`}
                 color={'warning'}
               ></Chip>
             </Grow>
@@ -263,6 +266,8 @@ const Home = () => {
             loading={loading}
             addVisible={addVisible}
             setAddVisible={handleAddVisible}
+            tagFilter={tagFilter}
+            setTagFilter={setTagFilter}
           />
         </Grid>
       </Grid>
@@ -291,8 +296,8 @@ const Home = () => {
           onFormSubmit={onFormSubmit}
           handleInputFieldChange={handleInputFieldChange}
           handleNoteFieldChange={handleNoteFieldChange}
-          handleAssigneFieldChange={handleAssigneeFieldChange}
-          assigneeFieldValue={assigneeFieldValue}
+          tagInputListValue={tagInputListValue}
+          handleTagInputListValue={handleTagInputListValue}
         />
       </Modal>
     </>

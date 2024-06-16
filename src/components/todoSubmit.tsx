@@ -1,8 +1,7 @@
-import { RefObject } from 'react'
-import { Box, Chip, IconButton, Stack, TextField } from '@mui/material'
-import { SentIcon } from 'hugeicons-react'
+import { RefObject, SetStateAction, useRef, useState } from 'react'
+import { Box, Card, CardContent, Chip, IconButton, InputAdornment, Stack, TextField } from '@mui/material'
+import { CancelCircleIcon, PlusSignIcon, SentIcon, Tag01Icon } from 'hugeicons-react'
 import Grid from '@mui/material/Unstable_Grid2'
-import { allUsers } from '../users.tsx'
 
 export interface TodoSubmitProps {
   todoNameRef: RefObject<HTMLInputElement>
@@ -11,13 +10,39 @@ export interface TodoSubmitProps {
   onFormSubmit: any
   handleInputFieldChange: any
   handleNoteFieldChange: any
-  assigneeFieldValue: string[]
-  handleAssigneFieldChange: any
+  tagInputListValue: string[]
+  handleTagInputListValue: any
 }
 
 const TodoSubmit = (props: TodoSubmitProps) => {
-  const { todoNameRef, inputFieldValue, noteFieldValue, handleNoteFieldChange, onFormSubmit, handleInputFieldChange } =
-    props
+  const {
+    todoNameRef,
+    inputFieldValue,
+    noteFieldValue,
+    handleNoteFieldChange,
+    onFormSubmit,
+    handleInputFieldChange,
+    tagInputListValue,
+    handleTagInputListValue,
+  } = props
+  const [tagInput, setTagInput] = useState<string>('')
+  const tagNameRef = useRef<HTMLInputElement>(null)
+
+  const handleTagInput = (event: { target: { value: SetStateAction<string> } }) => {
+    if (event.target.value.length > 20) return
+    setTagInput(event.target.value)
+  }
+
+  const handleTagListChange = () => {
+    handleTagInputListValue([...tagInputListValue, tagInput])
+    setTagInput('')
+    tagNameRef.current?.focus()
+  }
+
+  const removeTag = (tag: string) => {
+    const newTagList = tagInputListValue.filter((tagItem) => tagItem !== tag)
+    handleTagInputListValue(newTagList)
+  }
 
   return (
     <Box
@@ -52,30 +77,67 @@ const TodoSubmit = (props: TodoSubmitProps) => {
             label={'Kommentar'}
             variant="outlined"
             id="todoComment"
-            ref={todoNameRef}
             type="text"
             value={noteFieldValue}
             onChange={handleNoteFieldChange}
             fullWidth
           />
-          <Grid
-            container
-            spacing={1}
-            flex={'auto'}
-            direction={'row'}
-            padding={0}
-            sx={{
-              '& .MuiChip-filled': {
-                color: 'white',
-              },
-            }}
-          >
-            {allUsers && allUsers.map((user) => (
-              <Grid>
-                <Chip label={user.name} color={'warning'} variant={'outlined'}/>
+          <Card variant={'outlined'} style={{ backgroundColor: 'transparent' }}>
+            <CardContent>
+              <Stack direction={'row'} alignItems={'center'} spacing={'1rem'} paddingBottom={'1rem'}>
+                <TextField
+                  label={'Merkelapp'}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Tag01Icon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="outlined"
+                  id="todolabel"
+                  type="text"
+                  value={tagInput}
+                  onChange={handleTagInput}
+                  inputRef={tagNameRef}
+                  fullWidth
+                />
+                <IconButton
+                  type="button"
+                  onClick={handleTagListChange}
+                  disabled={!tagInput.trim()}
+                  title={'Opprett'}
+                  size="medium"
+                  sx={{ whiteSpace: 'nowrap', bgcolor: '#ef767a', color: 'white' }}
+                >
+                  <PlusSignIcon />
+                </IconButton>
+              </Stack>
+              <Grid
+                container
+                spacing={1}
+                flex={'auto'}
+                direction={'row'}
+                sx={{
+                  '& .MuiChip-filled': {
+                    color: 'white',
+                  },
+                }}
+              >
+                {tagInputListValue.map((tag) => (
+                  <Grid>
+                    <Chip
+                      deleteIcon={<CancelCircleIcon />}
+                      onDelete={() => removeTag(tag)}
+                      label={tag}
+                      color={'warning'}
+                      variant={'outlined'}
+                    />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </CardContent>
+          </Card>
         </Stack>
         <Box flexDirection={'column'} textAlign={'right'}>
           <IconButton

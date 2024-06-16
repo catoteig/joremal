@@ -4,6 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Alert,
+  Badge,
   Box,
   Checkbox,
   Chip,
@@ -27,6 +28,7 @@ import {
   CheckListIcon,
   CheckmarkSquare02Icon,
   Delete04Icon,
+  FilterRemoveIcon,
   Menu01Icon,
   NoteAddIcon,
   RowDeleteIcon,
@@ -53,6 +55,8 @@ export interface TodoListProps {
   loading: boolean
   setAddVisible: () => void
   addVisible: boolean
+  setTagFilter: (tags: string[]) => void
+  tagFilter: string[]
 }
 
 const TodoList = (props: TodoListProps) => {
@@ -71,6 +75,8 @@ const TodoList = (props: TodoListProps) => {
     loading,
     setAddVisible,
     addVisible,
+    setTagFilter,
+    tagFilter,
   } = props
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
@@ -145,11 +151,21 @@ const TodoList = (props: TodoListProps) => {
     setTagMenuAnchorEl(null)
   }
 
-  const tags = todos
+  const tags: string[] = todos
     .map((todo) => todo.list)
     .flat()
     .filter((value, index, array) => array.indexOf(value) === index)
     .sort((a, b) => a.localeCompare(b))
+
+  const handleTagFilter = (tag: string) => {
+    if (tagFilter.includes(tag)) {
+      setTagFilter(tagFilter.filter((t) => t !== tag))
+    } else {
+      setTagFilter([...tagFilter, tag])
+    }
+  }
+
+  const removeTagFilter = () => setTagFilter([])
 
   return (
     hasTodos && (
@@ -184,14 +200,21 @@ const TodoList = (props: TodoListProps) => {
                 <IconButton onClick={handleOrderBy} title={'Sorter'}>
                   <SortingAZ01Icon />
                 </IconButton>
-                <IconButton
-                  onClick={handleTagMenuClick}
-                  title={'Tags'}
-                  disabled={tags.length === 0}
-                  sx={{ display: { xs: 'none', md: 'block' } }}
+                <Badge
+                  badgeContent={tagFilter.length}
+                  color="warning"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  overlap={'circular'}
                 >
-                  <Tag01Icon />
-                </IconButton>
+                  <IconButton
+                    color={tagMenuOpen ? 'warning' : 'default'}
+                    onClick={handleTagMenuClick}
+                    title={'Tags'}
+                    disabled={tags.length === 0}
+                  >
+                    <Tag01Icon />
+                  </IconButton>
+                </Badge>
                 <Menu
                   id="basic-menu"
                   anchorEl={tagMenuAnchorEl}
@@ -203,14 +226,24 @@ const TodoList = (props: TodoListProps) => {
                   transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
+                  {tagFilter.length >0 && (
+                    <>
+                      <MenuItem onClick={removeTagFilter} title={'Vis alle'}>
+                        <FilterRemoveIcon />
+                        <p style={{ margin: '0rem 1rem' }}>Vis alle</p>
+                      </MenuItem>
+                      <Divider />
+                    </>
+                  )}
                   {tags.map((tag) => (
-                    <MenuItem onClick={handleTagMenuClose} title={`Tag ${tag}`}>
-                      <Tag01Icon />
-                      <p style={{ margin: '0rem 1rem' }}>{tag}</p>
+                    <MenuItem onClick={() => handleTagFilter(tag)} title={`Tag ${tag}`}>
+                      <Tag01Icon color={tagFilter.includes(tag) ? '#ef767a' : undefined} />
+                      <p style={{ margin: '0rem 1rem' }}>{tagFilter.includes(tag) ? <b>{tag}</b> : tag}</p>
                     </MenuItem>
                   ))}
                 </Menu>
                 <IconButton
+                  color={moreMenuOpen ? 'warning' : 'default'}
                   id="basic-button"
                   aria-controls={moreMenuOpen ? 'basic-menu' : undefined}
                   aria-haspopup="true"
@@ -228,8 +261,9 @@ const TodoList = (props: TodoListProps) => {
                   MenuListProps={{
                     'aria-labelledby': 'basic-button',
                   }}
-                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                  sx={{ color: '#f4ecd6' }}
                 >
                   <MenuItem onClick={handleRemoveAllClick} disabled={!completeTodos} title={'Slett utførte'}>
                     <RowDeleteIcon />

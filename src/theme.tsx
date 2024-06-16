@@ -4,7 +4,7 @@ const theme = () =>
   createTheme({
     palette: {
       primary: {
-        light: '#0AD3FF',
+        light: '#f4ecd6',
         main: '#55868C',
         dark: '#023C40',
         contrastText: '#78FFD6',
@@ -17,6 +17,17 @@ const theme = () =>
       },
       warning: {
         main: '#ef767a',
+      },
+    },
+    components: {
+      MuiMenu: {
+        styleOverrides: {
+          list: {
+            '&[role="menu"]': {
+              backgroundColor: '#e3eae2',
+            },
+          },
+        },
       },
     },
     spacing: 8,
