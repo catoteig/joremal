@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 import { getDb } from './services/db.tsx'
 import LoginSignupForm from './components/loginSignupForm.tsx'
-import { useState } from 'react'
+import { SetStateAction, useState } from 'react'
 
 const SignUp = () => {
   getDb()
@@ -13,10 +13,10 @@ const SignUp = () => {
 
   const [passwordFieldValue, setPasswordFieldValue] = useState<string>('')
 
-  const handleEmailFieldChange = (e: { target: { value: string } }) => {
+  const handleEmailFieldChange = (e: { target: { value: SetStateAction<string> } }) => {
     setEmailFieldValue(e.target.value)
   }
-  const handlePasswordFieldChange = (e: { target: { value: string } }) => {
+  const handlePasswordFieldChange = (e: { target: { value: SetStateAction<string> } }) => {
     setPasswordFieldValue(e.target.value)
   }
 

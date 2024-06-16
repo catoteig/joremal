@@ -15,6 +15,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
   Snackbar,
   Stack,
 } from '@mui/material'
@@ -25,11 +27,12 @@ import {
   CheckListIcon,
   CheckmarkSquare02Icon,
   Delete04Icon,
-  Logout03Icon,
+  Menu01Icon,
   NoteAddIcon,
   RowDeleteIcon,
   SortingAZ01Icon,
   SquareIcon,
+  Tag01Icon,
   Tick02Icon,
   ZapIcon,
 } from 'hugeicons-react'
@@ -90,6 +93,7 @@ const TodoList = (props: TodoListProps) => {
     removeAllTodo()
     setExpanded(false)
     setSnackbarMessage(`Alle utførte slettet (${completeTodos} stk)`)
+    setMoreMenuAnchorEl(null)
     setSnackbarOpen(true)
   }
 
@@ -102,6 +106,7 @@ const TodoList = (props: TodoListProps) => {
 
   const handleToggleAll = () => {
     toggleAllTodos()
+    setMoreMenuAnchorEl(null)
     setExpanded(false)
   }
 
@@ -113,6 +118,7 @@ const TodoList = (props: TodoListProps) => {
     autoFill()
     setSnackbarMessage('3 tilfeldige opprettet')
     setSnackbarOpen(true)
+    setMoreMenuAnchorEl(null)
   }
 
   const handleToggle = (id: string) => {
@@ -120,6 +126,30 @@ const TodoList = (props: TodoListProps) => {
     toggleTodo(id)
     setRemoveLoading(false)
   }
+
+  const [moreMenuAnchorEl, setMoreMenuAnchorEl] = React.useState<null | HTMLElement>(null)
+  const moreMenuOpen = Boolean(moreMenuAnchorEl)
+  const handlemoreMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMoreMenuAnchorEl(event.currentTarget)
+  }
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorEl(null)
+  }
+
+  const [tagMenuAnchorEl, setTagMenuAnchorEl] = React.useState<null | HTMLElement>(null)
+  const tagMenuOpen = Boolean(tagMenuAnchorEl)
+  const handleTagMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setTagMenuAnchorEl(event.currentTarget)
+  }
+  const handleTagMenuClose = () => {
+    setTagMenuAnchorEl(null)
+  }
+
+  const tags = todos
+    .map((todo) => todo.list)
+    .flat()
+    .filter((value, index, array) => array.indexOf(value) === index)
+    .sort((a, b) => a.localeCompare(b))
 
   return (
     hasTodos && (
@@ -151,25 +181,78 @@ const TodoList = (props: TodoListProps) => {
                 <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible} title={'Opprett'}>
                   <NoteAddIcon />
                 </IconButton>
-                <IconButton
-                  onClick={handleToggleAll}
-                  disabled={!hasTodos}
-                  title={hasIncompleteTodos ? 'Fjern alle kryss' : 'Kryss av alle'}
-                >
-                  {hasIncompleteTodos ? <SquareIcon /> : <CheckListIcon />}
-                </IconButton>
-                <IconButton onClick={handleRemoveAllClick} disabled={!completeTodos} title={'Slett utførte'}>
-                  <RowDeleteIcon />
-                </IconButton>
                 <IconButton onClick={handleOrderBy} title={'Sorter'}>
                   <SortingAZ01Icon />
                 </IconButton>
-                <IconButton onClick={handleRandom} title={'Lag tulleoppgaver'}>
-                  <ZapIcon />
+                <IconButton
+                  onClick={handleTagMenuClick}
+                  title={'Tags'}
+                  disabled={tags.length === 0}
+                  sx={{ display: { xs: 'none', md: 'block' } }}
+                >
+                  <Tag01Icon />
                 </IconButton>
-                <IconButton title={'Logg ut'} disabled>
-                  <Logout03Icon />
+                <Menu
+                  id="basic-menu"
+                  anchorEl={tagMenuAnchorEl}
+                  open={tagMenuOpen}
+                  onClose={handleTagMenuClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  {tags.map((tag) => (
+                    <MenuItem onClick={handleTagMenuClose} title={`Tag ${tag}`}>
+                      <Tag01Icon />
+                      <p style={{ margin: '0rem 1rem' }}>{tag}</p>
+                    </MenuItem>
+                  ))}
+                </Menu>
+                <IconButton
+                  id="basic-button"
+                  aria-controls={moreMenuOpen ? 'basic-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={moreMenuOpen ? 'true' : undefined}
+                  onClick={handlemoreMenuClick}
+                  title={'Meny'}
+                >
+                  <Menu01Icon />
                 </IconButton>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={moreMenuAnchorEl}
+                  open={moreMenuOpen}
+                  onClose={handleMoreMenuClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  <MenuItem onClick={handleRemoveAllClick} disabled={!completeTodos} title={'Slett utførte'}>
+                    <RowDeleteIcon />
+                    <p style={{ margin: '0rem 1rem' }}>Slett utførte</p>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleToggleAll}
+                    disabled={!hasTodos}
+                    title={hasIncompleteTodos ? 'Fjern alle kryss' : 'Kryss av alle'}
+                  >
+                    {hasIncompleteTodos ? <SquareIcon /> : <CheckListIcon />}
+                    <p style={{ margin: '0rem 1rem' }}>{hasIncompleteTodos ? 'Fjern alle kryss' : 'Kryss av alle'}</p>
+                  </MenuItem>
+                  <MenuItem onClick={handleRandom} title={'Lag tulleoppgaver'}>
+                    <ZapIcon />
+                    <p style={{ margin: '0rem 1rem' }}>Lag tulleoppgaver</p>
+                  </MenuItem>
+                  {/*<Divider/>*/}
+                  {/*<MenuItem title={'Logg ut'} disabled>*/}
+                  {/*  <Logout03Icon />*/}
+                  {/*  <p style={{ margin: '0rem 1rem' }}>Logg ut</p>*/}
+                  {/*</MenuItem>*/}
+                </Menu>
               </Stack>
             </Grid>
             <Grid xs={12} sx={{ padding: 0 }} height={'calc(100% - 3.3rem)'} overflow={'auto'}>
@@ -234,12 +317,7 @@ const TodoList = (props: TodoListProps) => {
                         disablePadding
                         color=""
                       >
-                        <ListItemButton
-                          role={undefined}
-                          onClick={handleTodoClick}
-                          dense
-                          sx={{ alignItems: 'center' }}
-                        >
+                        <ListItemButton role={undefined} onClick={handleTodoClick} dense sx={{ alignItems: 'center' }}>
                           <ListItemIcon>
                             <Checkbox
                               icon={<SquareIcon />}
@@ -263,7 +341,9 @@ const TodoList = (props: TodoListProps) => {
                                 ))}
                               </Grid>
                             )}
-                            {(todo.notes || todo.list.length > 0) && <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>}
+                            {(todo.notes || todo.list.length > 0) && (
+                              <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
+                            )}
                             <ListItemText
                               sx={{ fontStyle: 'italic', margin: 0, marginTop: 0 }}
                               id={labelId}
