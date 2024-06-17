@@ -226,7 +226,7 @@ const TodoList = (props: TodoListProps) => {
                   transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                  {tagFilter.length >0 && (
+                  {tagFilter.length > 0 && (
                     <>
                       <MenuItem onClick={removeTagFilter} title={'Vis alle'}>
                         <FilterRemoveIcon />
