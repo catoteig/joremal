@@ -6,6 +6,10 @@ import SignUp from './SignUp.tsx'
 import SignIn from './SignIn.tsx'
 import theme from './theme.tsx'
 import { ThemeProvider } from '@mui/material'
+import AuthProvider from './ContextProvider.tsx'
+import { getDb } from './services/db.tsx'
+
+getDb()
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +23,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={theme}>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />{' '}
+    </AuthProvider>
   </ThemeProvider>
 )

@@ -29,6 +29,7 @@ import {
   CheckmarkSquare02Icon,
   Delete04Icon,
   FilterRemoveIcon,
+  Logout03Icon,
   Menu01Icon,
   NoteAddIcon,
   RowDeleteIcon,
@@ -38,6 +39,8 @@ import {
   Tick02Icon,
   ZapIcon,
 } from 'hugeicons-react'
+import { AuthContext } from '../AuthContext.ts'
+import { useContext } from 'react'
 
 export interface TodoListProps {
   todos: TodoItem[]
@@ -83,6 +86,8 @@ const TodoList = (props: TodoListProps) => {
   const [snackbarMessage, setSnackbarMessage] = React.useState('')
   const [removeLoading, setRemoveLoading] = React.useState(false)
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
+
+  const { SignOut } = useContext(AuthContext)
 
   const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false)
@@ -194,10 +199,11 @@ const TodoList = (props: TodoListProps) => {
               height={'3.3rem'}
             >
               <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
+                {/*<p>{orderAsc ? 'True' : 'False'}</p>*/}
                 <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible} title={'Opprett'}>
                   <NoteAddIcon />
                 </IconButton>
-                <IconButton onClick={handleOrderBy} title={'Sorter'}>
+                <IconButton onClick={handleOrderBy} title={'Sorter'} disabled>
                   <SortingAZ01Icon />
                 </IconButton>
                 <Badge
@@ -281,11 +287,11 @@ const TodoList = (props: TodoListProps) => {
                     <ZapIcon />
                     <p style={{ margin: '0rem 1rem' }}>Lag tulleoppgaver</p>
                   </MenuItem>
-                  {/*<Divider/>*/}
-                  {/*<MenuItem title={'Logg ut'} disabled>*/}
-                  {/*  <Logout03Icon />*/}
-                  {/*  <p style={{ margin: '0rem 1rem' }}>Logg ut</p>*/}
-                  {/*</MenuItem>*/}
+                  <Divider />
+                  <MenuItem title={'Logg ut'} onClick={SignOut}>
+                    <Logout03Icon />
+                    <p style={{ margin: '0rem 1rem' }}>Logg ut</p>
+                  </MenuItem>
                 </Menu>
               </Stack>
             </Grid>

@@ -44,16 +44,20 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
               id="emailInput"
               label="E-post"
               variant="outlined"
+              type={'email'}
+              autoComplete={'username'}
               value={emailFieldValue}
-              onChange={(e) => handleEmailFieldChange(e.target.value)}
+              onChange={handleEmailFieldChange}
             />
             <TextField
-              id="passwordInput"
-              label="Passord"
-              variant="outlined"
-              type="password"
+              id={'passwordInput'}
+              label={'Passord'}
+              variant={'outlined'}
+              type={'password'}
+              name={'password'}
+              autoComplete={'current-password'}
               value={passwordFieldValue}
-              onChange={(e) => handlePasswordFieldChange(e.target.value)}
+              onChange={handlePasswordFieldChange}
             />
           </Stack>
           <Box flexDirection={'column'} textAlign={'right'}>

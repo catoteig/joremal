@@ -1,13 +1,9 @@
-import { useState } from 'react'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { useNavigate } from 'react-router-dom'
-import { getDb } from './services/db.tsx'
+import { useContext, useState } from 'react'
 import LoginSignupForm from './components/loginSignupForm.tsx'
+import { AuthContext } from './AuthContext.ts'
 
-const Login = () => {
-  getDb()
-  const auth = getAuth()
-  const navigate = useNavigate()
+const SignIn = () => {
+  const { LogIn } = useContext(AuthContext)
 
   const [emailFieldValue, setEmailFieldValue] = useState<string>('')
 
@@ -20,28 +16,16 @@ const Login = () => {
     setPasswordFieldValue(e.target.value)
   }
 
-  const onLogin = (e: { preventDefault: () => void }) => {
+  const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
-    signInWithEmailAndPassword(auth, emailFieldValue, passwordFieldValue)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user
-        navigate('/home')
-        console.log('user:', user)
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        console.log(errorCode, errorMessage)
-      })
+    LogIn({ email: emailFieldValue, password: passwordFieldValue })
   }
 
   return (
     <LoginSignupForm
-      onSubmit={onLogin}
+      onSubmit={onSubmit}
       buttonName={'Logg inn'}
       subTitle={'Logg inn'}
-      loginLink
       emailFieldValue={emailFieldValue}
       handleEmailFieldChange={handleEmailFieldChange}
       passwordFieldValue={passwordFieldValue}
@@ -50,4 +34,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default SignIn
