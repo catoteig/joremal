@@ -12,7 +12,15 @@ export const fbGetAll = async (): Promise<TodoItem[]> => {
 
   doc_refs.forEach((todo) => {
     const { name, complete, notes, created, updated, list } = todo.data() as TodoItem
-    res.push({ id: todo.id, name: name, complete: complete, notes: notes, created: created, updated: updated, list: list })
+    res.push({
+      id: todo.id,
+      name: name,
+      complete: complete,
+      notes: notes,
+      created: created,
+      updated: updated,
+      list: list,
+    })
   })
   return res
 }
@@ -20,6 +28,7 @@ export const fbGetAll = async (): Promise<TodoItem[]> => {
 export const fbCreate = async (args: TodoItem | TodoItem[]) => {
   const items: TodoItem[] = Array.isArray(args) ? args : [args]
   for (const item of items) {
+    item.list = [...new Set(item.list)] // Remove duplicates
     await addDoc(collection(getDb(), collectionName), item)
   }
 }

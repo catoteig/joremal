@@ -91,6 +91,8 @@ const Home = () => {
 
   const handleRemove = async (todo: TodoItem | TodoItem[]) => {
     if (Array.isArray(todo)) setLoading(true)
+    clearTodoFilter()
+    clearTagFilter()
     await fbDelete(todo)
       .then(() => setLoading(false))
       .then(() => handleFetch())
@@ -191,7 +193,8 @@ const Home = () => {
 
   const setFilterComplete = () => setTodoFilter('complete')
   const setFilterIncomplete = () => setTodoFilter('incomplete')
-  const clearFilter = () => setTodoFilter(null)
+  const clearTodoFilter = () => setTodoFilter(null)
+  const clearTagFilter = () => setTagFilter([])
 
   return (
     <>
@@ -229,7 +232,7 @@ const Home = () => {
               <Chip
                 component={'button'}
                 variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
-                onClick={todoFilter === 'complete' ? clearFilter : setFilterComplete}
+                onClick={todoFilter === 'complete' ? clearTodoFilter : setFilterComplete}
                 icon={<Award04Icon />}
                 label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
                   completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
@@ -241,7 +244,7 @@ const Home = () => {
               <Chip
                 component={'button'}
                 variant={todoFilter === 'incomplete' ? 'filled' : 'outlined'}
-                onClick={todoFilter === 'incomplete' ? clearFilter : setFilterIncomplete}
+                onClick={todoFilter === 'incomplete' ? clearTodoFilter : setFilterIncomplete}
                 icon={<WorkoutKickingIcon />}
                 label={`${incompleteTodos} uferdig${incompleteTodos === 1 ? '' : 'e'}`}
                 color={'warning'}
