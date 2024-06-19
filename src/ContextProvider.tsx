@@ -65,7 +65,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setCurrentUser(null)
       navigate('/login')
     } catch (error) {
-      throw new Error(error)
+      console.error('Error signing out:', error)
     }
     setIsLoading(false)
   }
