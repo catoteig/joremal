@@ -1,33 +1,52 @@
 import { RefObject, SetStateAction, useRef, useState } from 'react'
-import { Box, Card, CardContent, Chip, IconButton, InputAdornment, Stack, TextField } from '@mui/material'
+import { Box, capitalize, Card, CardContent, Chip, IconButton, InputAdornment, Stack, TextField } from '@mui/material'
 import { CancelCircleIcon, PlusSignIcon, SentIcon, Tag01Icon } from 'hugeicons-react'
 import Grid from '@mui/material/Unstable_Grid2'
+import { TodoItem } from '../Home.tsx'
+import { v4 } from 'uuid'
 
 export interface TodoSubmitProps {
   todoNameRef: RefObject<HTMLInputElement>
-  inputFieldValue: string
-  noteFieldValue: string
-  onFormSubmit: any
-  handleInputFieldChange: any
-  handleNoteFieldChange: any
-  tagInputListValue: string[]
-  handleTagInputListValue: any
+  handleAddTodo: (newTodo: TodoItem) => void
+  handleAddModalVisible: () => void
 }
 
 const TodoSubmit = (props: TodoSubmitProps) => {
-  const {
-    todoNameRef,
-    inputFieldValue,
-    noteFieldValue,
-    handleNoteFieldChange,
-    onFormSubmit,
-    handleInputFieldChange,
-    tagInputListValue,
-    handleTagInputListValue,
-  } = props
+  const { todoNameRef, handleAddTodo, handleAddModalVisible } = props
   const [tagInput, setTagInput] = useState<string>('')
   const tagNameRef = useRef<HTMLInputElement>(null)
+  const [inputFieldValue, setInputFieldValue] = useState<string>('')
+  const [noteFieldValue, setNoteFieldValue] = useState<string>('')
+  const [tagInputListValue, setTagInputListValue] = useState<string[]>([])
 
+  const onFormSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
+    if (!inputFieldValue.trim()) return
+    const newTodo: TodoItem = {
+      name: capitalize(inputFieldValue),
+      complete: false,
+      id: v4(),
+      notes: noteFieldValue,
+      // @ts-expect-error Created datatype
+      created: new Date(),
+      list: tagInputListValue,
+    }
+    handleAddTodo(newTodo)
+    setInputFieldValue('')
+    setNoteFieldValue('')
+    handleAddModalVisible()
+    setTagInputListValue([])
+  }
+
+  const handleInputFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
+    setInputFieldValue(event.target.value)
+  }
+  const handleNoteFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
+    setNoteFieldValue(event.target.value)
+  }
+  const handleTagInputListValue = (val: string[]) => {
+    setTagInputListValue(val)
+  }
   const handleTagInput = (event: { target: { value: SetStateAction<string> } }) => {
     if (event.target.value.length > 20) return
     setTagInput(event.target.value)
@@ -56,7 +75,6 @@ const TodoSubmit = (props: TodoSubmitProps) => {
         bgcolor: '#EDF4ED',
         border: '1px dashed grey',
         borderRadius: 2,
-        boxShadow: 24,
         p: 2,
       }}
     >
@@ -140,9 +158,10 @@ const TodoSubmit = (props: TodoSubmitProps) => {
           </Card>
         </Stack>
         <Box flexDirection={'column'} textAlign={'right'}>
+          <p>-{inputFieldValue}-</p>
           <IconButton
             type="submit"
-            disabled={!inputFieldValue.trim()}
+            disabled={!inputFieldValue}
             title={'Opprett'}
             size="large"
             sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white' }}

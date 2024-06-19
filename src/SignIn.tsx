@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import LoginSignupForm from './components/loginSignupForm.tsx'
-import { AuthContext } from './AuthContext.ts'
+import { useAuth } from './AuthContext.ts'
 
 const SignIn = () => {
-  const { LogIn } = useContext(AuthContext)
+  const auth = useAuth()
 
   const [emailFieldValue, setEmailFieldValue] = useState<string>('')
 
@@ -18,7 +18,7 @@ const SignIn = () => {
 
   const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
-    LogIn({ email: emailFieldValue, password: passwordFieldValue })
+    if (auth) await auth.LogIn({ email: emailFieldValue, password: passwordFieldValue })
   }
 
   return (

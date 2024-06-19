@@ -33,7 +33,6 @@ import {
   Menu01Icon,
   NoteAddIcon,
   RowDeleteIcon,
-  SortingAZ01Icon,
   SquareIcon,
   Tag01Icon,
   Tick02Icon,
@@ -73,8 +72,8 @@ const TodoList = (props: TodoListProps) => {
     completeTodos,
     removeAllTodo,
     autoFill,
-    orderAsc,
-    setOrderAsc,
+    // orderAsc,
+    // setOrderAsc,
     loading,
     setAddVisible,
     addVisible,
@@ -121,9 +120,9 @@ const TodoList = (props: TodoListProps) => {
     setExpanded(false)
   }
 
-  const handleOrderBy = () => {
-    setOrderAsc(!orderAsc)
-  }
+  // const handleOrderBy = () => {
+  //   setOrderAsc(!orderAsc)
+  // }´
 
   const handleRandom = () => {
     autoFill()
@@ -203,9 +202,9 @@ const TodoList = (props: TodoListProps) => {
                 <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible} title={'Opprett'}>
                   <NoteAddIcon />
                 </IconButton>
-                <IconButton onClick={handleOrderBy} title={'Sorter'} disabled>
-                  <SortingAZ01Icon />
-                </IconButton>
+                {/*<IconButton onClick={handleOrderBy} title={'Sorter'}>*/}
+                {/*  <SortingAZ01Icon />*/}
+                {/*</IconButton>*/}
                 <Badge
                   badgeContent={tagFilter.length}
                   color="warning"

@@ -11,6 +11,8 @@ import TodoList from './components/todoList.tsx'
 import TodoSubmit from './components/todoSubmit.tsx'
 import firebase from 'firebase/compat/app'
 import { Award04Icon, NoteAddIcon, WorkoutKickingIcon } from 'hugeicons-react'
+import { useAuth } from './AuthContext.ts'
+import { Navigate } from 'react-router-dom'
 import firestore = firebase.firestore
 
 export type TodoItem = {
@@ -31,13 +33,11 @@ const Home = () => {
   const [tagFilter, setTagFilter] = React.useState<string[]>([])
   const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
 
-  const [inputFieldValue, setInputFieldValue] = useState<string>('')
-  const [noteFieldValue, setNoteFieldValue] = useState<string>('')
-  const [tagInputListValue, setTagInputListValue] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [, setWidth] = useState<number>(window.innerWidth)
   const [addModalVisible, setAddModalVisible] = React.useState<boolean>(false)
   const todoNameRef = useRef<HTMLInputElement>(null)
+  const { user } = useAuth()
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth)
@@ -62,7 +62,13 @@ const Home = () => {
   const handleAddModalVisible = () => {
     setAddModalVisible(!addModalVisible)
   }
+  const handleAddTodo = (newTodo: TodoItem) => {
+    fbCreate(newTodo).then(() => handleFetch())
 
+    if (todoNameRef.current) {
+      todoNameRef.current.value = ''
+    }
+  }
   const handleTodoFilterAndSort = () => {
     let filtered: TodoItem[] = []
     if (todoFilter === 'complete') {
@@ -83,10 +89,6 @@ const Home = () => {
       .then((res) => setTodos([...res]))
       .then(() => handleTodoFilterAndSort())
     setLoading(false)
-  }
-
-  const handleCreate = async (todo: TodoItem) => {
-    await fbCreate(todo).then(() => handleFetch())
   }
 
   const handleRemove = async (todo: TodoItem | TodoItem[]) => {
@@ -120,25 +122,6 @@ const Home = () => {
     handleUpdateTodo(newTodos).then(() => handleFetch())
   }
 
-  const handleAddTodo = () => {
-    if (!inputFieldValue.trim()) return
-    const newTodo: TodoItem = {
-      name: capitalize(inputFieldValue),
-      complete: false,
-      id: v4(),
-      notes: noteFieldValue,
-      // @ts-expect-error Created datatype
-      created: new Date(),
-      list: tagInputListValue,
-    }
-    handleCreate(newTodo).then(() => handleFetch())
-    setInputFieldValue('')
-    setNoteFieldValue('')
-    if (todoNameRef.current) {
-      todoNameRef.current.value = ''
-    }
-  }
-
   const handleRemoveCompletedTodo = () => {
     setLoading(true)
     const completedTodos = todos.filter((todo) => todo.complete)
@@ -164,23 +147,6 @@ const Home = () => {
     fbCreate(todoItems).then(() => handleFetch())
   }
 
-  const onFormSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-    handleAddTodo()
-    handleAddModalVisible()
-    setTagInputListValue([])
-  }
-
-  const handleInputFieldChange = (input: string) => {
-    setInputFieldValue(input)
-  }
-  const handleNoteFieldChange = (note: string) => {
-    setNoteFieldValue(note)
-  }
-  const handleTagInputListValue = (val: string[]) => {
-    setTagInputListValue(val)
-  }
-
   const { incompleteTodos, completeTodos } = todos.reduce(
     (acc: { incompleteTodos: number; completeTodos: number }, todo) => {
       !todo.complete ? acc.incompleteTodos++ : acc.completeTodos++
@@ -196,7 +162,9 @@ const Home = () => {
   const clearTodoFilter = () => setTodoFilter(null)
   const clearTagFilter = () => setTagFilter([])
 
-  return (
+  return !user ? (
+    <Navigate to="/login" />
+  ) : (
     <>
       <Grid
         container
@@ -235,7 +203,7 @@ const Home = () => {
                 />
               </Grow>
             )}
-            {incompleteTodos > 0 &&
+            {incompleteTodos > 0 && (
               <Grow in={true} key="incompleteChip">
                 <Chip
                   component={'button'}
@@ -246,7 +214,7 @@ const Home = () => {
                   color={'warning'}
                 ></Chip>
               </Grow>
-            }
+            )}
           </Stack>
         </Grid>
         <Grid xs={12} maxHeight={'calc(100vh - 10rem)'} padding={0} paddingTop={'1rem'}>
@@ -291,13 +259,8 @@ const Home = () => {
       <Modal open={addModalVisible} onClose={handleAddModalVisible}>
         <TodoSubmit
           todoNameRef={todoNameRef}
-          inputFieldValue={inputFieldValue}
-          noteFieldValue={noteFieldValue}
-          onFormSubmit={onFormSubmit}
-          handleInputFieldChange={handleInputFieldChange}
-          handleNoteFieldChange={handleNoteFieldChange}
-          tagInputListValue={tagInputListValue}
-          handleTagInputListValue={handleTagInputListValue}
+          handleAddTodo={handleAddTodo}
+          handleAddModalVisible={handleAddModalVisible}
         />
       </Modal>
     </>

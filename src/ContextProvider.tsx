@@ -1,15 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, User } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  User,
+  onAuthStateChanged,
+} from 'firebase/auth'
 import { AuthContext, IAuth, LoginFormValues, UserFormValues } from './AuthContext.ts'
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  // const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true)
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true)
   const navigate = useNavigate()
 
   const auth = getAuth()
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user)
+      setIsAuthLoading(false)
+    })
+
+    return unsubscribe
+  }, [auth])
 
   const LogIn = async (creds: LoginFormValues) => {
     setIsLoading(true)
@@ -17,23 +32,20 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .then((userCredential) => {
         const { user } = userCredential
         if (user) setCurrentUser(user)
-        console.log('Logged in as user:', user)
         navigate('/')
         setIsLoading(false)
       })
       .catch((error) => {
         const errorCode = error.code
         const errorMessage = error.message
-        console.log(errorCode, errorMessage)
+        throw new Error(`${errorCode} ${errorMessage}`)
       })
   }
 
   const SignUp = (creds: UserFormValues) => {
     setIsLoading(true)
-
     createUserWithEmailAndPassword(auth, creds.email, creds.password)
       .then((userCredential) => {
-        // Signed in
         const { user } = userCredential
         console.log('Signed up user:', user)
         navigate('/login')
@@ -42,19 +54,18 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .catch((error) => {
         const errorCode = error.code
         const errorMessage = error.message
-        console.log(errorCode, errorMessage)
+        throw new Error(`${errorCode} - ${errorMessage}`)
       })
   }
 
-  const LogOut = async () => {
+  const SignOut = async () => {
     setIsLoading(true)
     try {
       await auth.signOut()
       setCurrentUser(null)
       navigate('/login')
-      console.log('Logged out')
     } catch (error) {
-      console.log(error)
+      throw new Error(error)
     }
     setIsLoading(false)
   }
@@ -62,12 +73,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const authValues: IAuth = {
     user: currentUser,
     loading: isLoading,
-    LogIn: LogIn,
-    SignUp: SignUp,
-    SignOut: LogOut,
+    LogIn,
+    SignUp,
+    SignOut,
   }
 
-  return <AuthContext.Provider value={authValues}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={authValues}>{!isAuthLoading && children}</AuthContext.Provider>
 }
 
 export default AuthProvider

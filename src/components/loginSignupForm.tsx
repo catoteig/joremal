@@ -63,7 +63,7 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
           <Box flexDirection={'column'} textAlign={'right'}>
             <IconButton
               type="submit"
-              disabled={!emailFieldValue || !passwordFieldValue}
+              disabled={!/.+@.+\..+/.test(emailFieldValue) || !passwordFieldValue}
               onClick={onSubmit}
               title={buttonName}
               size="large"
@@ -74,13 +74,17 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
           </Box>
         </Box>
       </Grid>
-      {loginLink && (
-        <Grid xs={12} textAlign={'end'}>
+      <Grid xs={12} textAlign={'end'}>
+        {loginLink ? (
           <p>
-            <Link href="/login">Logg inn</Link> dersom du har bruker
+            Har du bruker? <Link href="/login">Logg inn</Link>
           </p>
-        </Grid>
-      )}
+        ) : (
+          <p>
+            Ny? <Link href="/signup">Opprett bruker</Link>
+          </p>
+        )}
+      </Grid>
     </Grid>
   )
 }
