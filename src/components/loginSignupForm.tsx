@@ -1,4 +1,4 @@
-import { Alert, Box, IconButton, Link, Stack, TextField } from '@mui/material'
+import { Alert, Box, Grow, IconButton, Link, Stack, TextField, Zoom } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 import { SentIcon } from 'hugeicons-react'
@@ -62,9 +62,11 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
               onChange={handlePasswordFieldChange}
             />
             {error && (
-              <Alert variant={'filled'} severity="error">
-                {error}
-              </Alert>
+              <Zoom in={true} key="errormessage">
+                <Alert variant={'filled'} severity="error">
+                  {error}
+                </Alert>
+              </Zoom>
             )}
           </Stack>
           <Box flexDirection={'column'} textAlign={'right'}>

@@ -1,3 +1,6 @@
+
+// Translated using GPT, list: https://firebase.google.com/docs/auth/admin/errors
+
 export const errorText = (code: string): string =>
   [
     { code: 'auth/claims-too-large', message: 'Kravene er for store' },

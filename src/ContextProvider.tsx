@@ -34,13 +34,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { user } = userCredential
         if (user) setCurrentUser(user)
         navigate('/')
-        console.log('CRED:', userCredential)
         setIsLoading(false)
         return null
       })
       .catch((error) => {
         setIsLoading(false)
-        console.log('blah')
         return errorText(error.code)
       })
   }
@@ -48,15 +46,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const SignUp = (creds: UserFormValues): Promise<null | string> => {
     setIsLoading(true)
     return createUserWithEmailAndPassword(auth, creds.email, creds.password)
-      .then((userCredential) => {
-        const { user } = userCredential
-        console.log('Signed up user:', user)
+      .then(() => {
         navigate('/login')
         setIsLoading(false)
         return null
       })
       .catch((error) => {
-        console.log('catch', error.code)
         setIsLoading(false)
         return errorText(error.code)
       })
