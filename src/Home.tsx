@@ -1,6 +1,6 @@
 import './Home.css'
 import * as React from 'react'
-import { SetStateAction, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fbCreate, fbDelete, fbGetAll, fbUpdate } from './services/joremal.tsx'
 import { capitalize } from './helpers/helpers.tsx'
 import { v4 } from 'uuid'
@@ -11,6 +11,8 @@ import TodoList from './components/todoList.tsx'
 import TodoSubmit from './components/todoSubmit.tsx'
 import firebase from 'firebase/compat/app'
 import { Award04Icon, NoteAddIcon, WorkoutKickingIcon } from 'hugeicons-react'
+import { useAuth } from './AuthContext.ts'
+import { Navigate } from 'react-router-dom'
 import firestore = firebase.firestore
 
 export type TodoItem = {
@@ -31,13 +33,11 @@ const Home = () => {
   const [tagFilter, setTagFilter] = React.useState<string[]>([])
   const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
 
-  const [inputFieldValue, setInputFieldValue] = useState<string>('')
-  const [noteFieldValue, setNoteFieldValue] = useState<string>('')
-  const [tagInputListValue, setTagInputListValue] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [, setWidth] = useState<number>(window.innerWidth)
-  const [addVisible, setAddVisible] = React.useState<boolean>(false)
+  const [addModalVisible, setAddModalVisible] = React.useState<boolean>(false)
   const todoNameRef = useRef<HTMLInputElement>(null)
+  const { user } = useAuth()
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth)
@@ -59,10 +59,16 @@ const Home = () => {
     handleTodoFilterAndSort()
   }, [todoFilter, todos, orderAsc, tagFilter])
 
-  const handleAddVisible = () => {
-    setAddVisible(!addVisible)
+  const handleAddModalVisible = () => {
+    setAddModalVisible(!addModalVisible)
   }
+  const handleAddTodo = (newTodo: TodoItem) => {
+    fbCreate(newTodo).then(() => handleFetch())
 
+    if (todoNameRef.current) {
+      todoNameRef.current.value = ''
+    }
+  }
   const handleTodoFilterAndSort = () => {
     let filtered: TodoItem[] = []
     if (todoFilter === 'complete') {
@@ -73,8 +79,8 @@ const Home = () => {
       filtered = todos
     }
 
-    filtered = filtered.sort((a, b) => (orderAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
     if (tagFilter.length > 0) filtered = filtered.filter((todo) => tagFilter.some((tag) => todo.list.includes(tag)))
+    filtered = filtered.sort((a, b) => (orderAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
     setTodosWithFilterAndSort(filtered)
   }
 
@@ -83,10 +89,6 @@ const Home = () => {
       .then((res) => setTodos([...res]))
       .then(() => handleTodoFilterAndSort())
     setLoading(false)
-  }
-
-  const handleCreate = async (todo: TodoItem) => {
-    await fbCreate(todo).then(() => handleFetch())
   }
 
   const handleRemove = async (todo: TodoItem | TodoItem[]) => {
@@ -120,25 +122,6 @@ const Home = () => {
     handleUpdateTodo(newTodos).then(() => handleFetch())
   }
 
-  const handleAddTodo = () => {
-    if (!inputFieldValue.trim()) return
-    const newTodo: TodoItem = {
-      name: capitalize(inputFieldValue),
-      complete: false,
-      id: v4(),
-      notes: noteFieldValue,
-      // @ts-expect-error Created datatype
-      created: new Date(),
-      list: tagInputListValue,
-    }
-    handleCreate(newTodo).then(() => handleFetch())
-    setInputFieldValue('')
-    setNoteFieldValue('')
-    if (todoNameRef.current) {
-      todoNameRef.current.value = ''
-    }
-  }
-
   const handleRemoveCompletedTodo = () => {
     setLoading(true)
     const completedTodos = todos.filter((todo) => todo.complete)
@@ -164,23 +147,6 @@ const Home = () => {
     fbCreate(todoItems).then(() => handleFetch())
   }
 
-  const onFormSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-    handleAddTodo()
-    handleAddVisible()
-    setTagInputListValue([])
-  }
-
-  const handleInputFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
-    setInputFieldValue(event.target.value)
-  }
-  const handleNoteFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
-    setNoteFieldValue(event.target.value)
-  }
-  const handleTagInputListValue = (val: string[]) => {
-    setTagInputListValue(val)
-  }
-
   const { incompleteTodos, completeTodos } = todos.reduce(
     (acc: { incompleteTodos: number; completeTodos: number }, todo) => {
       !todo.complete ? acc.incompleteTodos++ : acc.completeTodos++
@@ -196,7 +162,9 @@ const Home = () => {
   const clearTodoFilter = () => setTodoFilter(null)
   const clearTagFilter = () => setTagFilter([])
 
-  return (
+  return !user ? (
+    <Navigate to="/login" />
+  ) : (
     <>
       <Grid
         container
@@ -221,35 +189,32 @@ const Home = () => {
           }}
         >
           <Stack direction={'row'} spacing={'0.5rem'} justifyContent={'flex-end'}>
-            {/*{todoFilter !== null && (*/}
-            {/*  <Grow in={true} key="clearFilter">*/}
-            {/*    <IconButton component={'button'} onClick={clearFilter} size={'small'} sx={{ p: '0 5px' }}>*/}
-            {/*      <Clear />*/}
-            {/*    </IconButton>*/}
-            {/*  </Grow>*/}
-            {/*)}*/}
-            <Grow in={true} key="completeChip">
-              <Chip
-                component={'button'}
-                variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
-                onClick={todoFilter === 'complete' ? clearTodoFilter : setFilterComplete}
-                icon={<Award04Icon />}
-                label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
-                  completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
-                }`}
-                color={'success'}
-              />
-            </Grow>
-            <Grow in={true} key="incompleteChip">
-              <Chip
-                component={'button'}
-                variant={todoFilter === 'incomplete' ? 'filled' : 'outlined'}
-                onClick={todoFilter === 'incomplete' ? clearTodoFilter : setFilterIncomplete}
-                icon={<WorkoutKickingIcon />}
-                label={`${incompleteTodos} uferdig${incompleteTodos === 1 ? '' : 'e'}`}
-                color={'warning'}
-              ></Chip>
-            </Grow>
+            {completeTodos > 0 && (
+              <Grow in={true} key="completeChip">
+                <Chip
+                  component={'button'}
+                  variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
+                  onClick={todoFilter === 'complete' ? clearTodoFilter : setFilterComplete}
+                  icon={<Award04Icon />}
+                  label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
+                    completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
+                  }`}
+                  color={'success'}
+                />
+              </Grow>
+            )}
+            {incompleteTodos > 0 && (
+              <Grow in={true} key="incompleteChip">
+                <Chip
+                  component={'button'}
+                  variant={todoFilter === 'incomplete' ? 'filled' : 'outlined'}
+                  onClick={todoFilter === 'incomplete' ? clearTodoFilter : setFilterIncomplete}
+                  icon={<WorkoutKickingIcon />}
+                  label={`${incompleteTodos} uferdig${incompleteTodos === 1 ? '' : 'e'}`}
+                  color={'warning'}
+                ></Chip>
+              </Grow>
+            )}
           </Stack>
         </Grid>
         <Grid xs={12} maxHeight={'calc(100vh - 10rem)'} padding={0} paddingTop={'1rem'}>
@@ -267,14 +232,14 @@ const Home = () => {
             setOrderAsc={setOrderAsc}
             fetchData={handleFetch}
             loading={loading}
-            addVisible={addVisible}
-            setAddVisible={handleAddVisible}
+            addVisible={addModalVisible}
+            setAddVisible={handleAddModalVisible}
             tagFilter={tagFilter}
             setTagFilter={setTagFilter}
           />
         </Grid>
       </Grid>
-      {!addVisible && (
+      {!addModalVisible && (
         <>
           {/*<SpeedDialCustom />*/}
           <Fab
@@ -285,22 +250,17 @@ const Home = () => {
                 ? { position: 'absolute', bottom: '3rem', right: '3rem', color: '#F4ECD6' }
                 : { position: 'absolute', top: '7rem', right: 'calc(50% - 8rem)' }
             }
-            onClick={handleAddVisible}
+            onClick={handleAddModalVisible}
           >
             <NoteAddIcon />
           </Fab>
         </>
       )}
-      <Modal open={addVisible} onClose={handleAddVisible}>
+      <Modal open={addModalVisible} onClose={handleAddModalVisible}>
         <TodoSubmit
           todoNameRef={todoNameRef}
-          inputFieldValue={inputFieldValue}
-          noteFieldValue={noteFieldValue}
-          onFormSubmit={onFormSubmit}
-          handleInputFieldChange={handleInputFieldChange}
-          handleNoteFieldChange={handleNoteFieldChange}
-          tagInputListValue={tagInputListValue}
-          handleTagInputListValue={handleTagInputListValue}
+          handleAddTodo={handleAddTodo}
+          handleAddModalVisible={handleAddModalVisible}
         />
       </Modal>
     </>

@@ -1,24 +1,29 @@
-import ReactDOM from 'react-dom/client'
 import './index.css'
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import Home from './Home.tsx'
 import SignUp from './SignUp.tsx'
 import SignIn from './SignIn.tsx'
-import theme from './theme.tsx'
-import { ThemeProvider } from '@mui/material'
+import ProtectedRoute from './components/protectedRoute.tsx' // Ensure this points to the correct file
+import { getDb } from './services/db.tsx'
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route>
-      <Route index path="/" element={<Home />} />
+getDb()
+
+export const App = () => {
+  return (
+    <Routes>
+      <Route
+        index
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
       <Route path="login" element={<SignIn />} />
       <Route path="signup" element={<SignUp />} />
-    </Route>
+    </Routes>
   )
-)
+}
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ThemeProvider theme={theme}>
-    <RouterProvider router={router} />
-  </ThemeProvider>
-)
+export default App

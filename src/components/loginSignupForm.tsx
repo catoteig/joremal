@@ -44,22 +44,26 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
               id="emailInput"
               label="E-post"
               variant="outlined"
+              type={'email'}
+              autoComplete={'username'}
               value={emailFieldValue}
-              onChange={(e) => handleEmailFieldChange(e.target.value)}
+              onChange={handleEmailFieldChange}
             />
             <TextField
-              id="passwordInput"
-              label="Passord"
-              variant="outlined"
-              type="password"
+              id={'passwordInput'}
+              label={'Passord'}
+              variant={'outlined'}
+              type={'password'}
+              name={'password'}
+              autoComplete={'current-password'}
               value={passwordFieldValue}
-              onChange={(e) => handlePasswordFieldChange(e.target.value)}
+              onChange={handlePasswordFieldChange}
             />
           </Stack>
           <Box flexDirection={'column'} textAlign={'right'}>
             <IconButton
               type="submit"
-              disabled={!emailFieldValue || !passwordFieldValue}
+              disabled={!/.+@.+\..+/.test(emailFieldValue) || !passwordFieldValue}
               onClick={onSubmit}
               title={buttonName}
               size="large"
@@ -70,13 +74,17 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
           </Box>
         </Box>
       </Grid>
-      {loginLink && (
-        <Grid xs={12} textAlign={'end'}>
+      <Grid xs={12} textAlign={'end'}>
+        {loginLink ? (
           <p>
-            <Link href="/login">Logg inn</Link> dersom du har bruker
+            Har du bruker? <Link href="/login">Logg inn</Link>
           </p>
-        </Grid>
-      )}
+        ) : (
+          <p>
+            Ny? <Link href="/signup">Opprett bruker</Link>
+          </p>
+        )}
+      </Grid>
     </Grid>
   )
 }

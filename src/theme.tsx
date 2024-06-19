@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material/styles'
+import { Theme } from '@emotion/react'
 
-const theme = () =>
+const theme: Theme = () =>
   createTheme({
     palette: {
       primary: {

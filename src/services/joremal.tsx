@@ -23,6 +23,51 @@ export const fbGetAll = async (): Promise<TodoItem[]> => {
     })
   })
   return res
+  // return [
+  //   {
+  //     id: '1jRA97i94Qt79xz6f392L',
+  //     name: 'Todo 1',
+  //     complete: false,
+  //     notes: '',
+  //     created: {
+  //       seconds: 1718049192,
+  //       nanoseconds: 571000000,
+  //     },
+  //     updated: {
+  //       seconds: 1718536883,
+  //       nanoseconds: 513000000,
+  //     },
+  //     list: ['John Doe', 'Jane Doe'],
+  //   },    {
+  //     id: '2jRA97i94Qt79xz6f392L',
+  //     name: 'Todo 3',
+  //     complete: false,
+  //     notes: '',
+  //     created: {
+  //       seconds: 1718049192,
+  //       nanoseconds: 571000000,
+  //     },
+  //     updated: {
+  //       seconds: 1718536883,
+  //       nanoseconds: 513000000,
+  //     },
+  //     list: ['John Doe', 'Jane Doe'],
+  //   },    {
+  //     id: '3jRA97i94Qt79xz6f392L',
+  //     name: 'Todo 2',
+  //     complete: false,
+  //     notes: '',
+  //     created: {
+  //       seconds: 1718049192,
+  //       nanoseconds: 571000000,
+  //     },
+  //     updated: {
+  //       seconds: 1718536883,
+  //       nanoseconds: 513000000,
+  //     },
+  //     list: ['John Doe', 'Jane Doe'],
+  //   },
+  // ]
 }
 
 export const fbCreate = async (args: TodoItem | TodoItem[]) => {

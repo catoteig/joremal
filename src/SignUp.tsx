@@ -1,13 +1,9 @@
-import { useNavigate } from 'react-router-dom'
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
-import { getDb } from './services/db.tsx'
 import LoginSignupForm from './components/loginSignupForm.tsx'
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useContext, useState } from 'react'
+import { AuthContext } from './AuthContext.ts'
 
 const SignUp = () => {
-  getDb()
-  const auth = getAuth()
-  const navigate = useNavigate()
+  const { SignUp } = useContext(AuthContext)
 
   const [emailFieldValue, setEmailFieldValue] = useState<string>('')
 
@@ -22,21 +18,7 @@ const SignUp = () => {
 
   const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
-
-    await createUserWithEmailAndPassword(auth, emailFieldValue, passwordFieldValue)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user
-        console.log(user)
-        navigate('/login')
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        console.log(errorCode, errorMessage)
-        // ..
-      })
+    SignUp({ email: emailFieldValue, password: passwordFieldValue })
   }
 
   return (
