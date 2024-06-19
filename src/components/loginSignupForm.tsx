@@ -1,4 +1,4 @@
-import { Box, IconButton, Link, Stack, TextField } from '@mui/material'
+import { Alert, Box, IconButton, Link, Stack, TextField } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 import { SentIcon } from 'hugeicons-react'
@@ -12,6 +12,7 @@ export interface LoginSignupFormProps {
   subTitle: string
   buttonName: string
   loginLink?: boolean
+  error: string | null
 }
 
 const LoginSignupForm = (props: LoginSignupFormProps) => {
@@ -24,6 +25,7 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
     handleEmailFieldChange,
     passwordFieldValue,
     handlePasswordFieldChange,
+    error = null,
   } = props
 
   return (
@@ -59,6 +61,11 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
               value={passwordFieldValue}
               onChange={handlePasswordFieldChange}
             />
+            {error && (
+              <Alert variant={'filled'} severity="error">
+                {error}
+              </Alert>
+            )}
           </Stack>
           <Box flexDirection={'column'} textAlign={'right'}>
             <IconButton
@@ -67,7 +74,7 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
               onClick={onSubmit}
               title={buttonName}
               size="large"
-              sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white' }}
+              sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: '#55868C' } }}
             >
               <SentIcon />
             </IconButton>

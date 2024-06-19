@@ -86,7 +86,7 @@ const TodoList = (props: TodoListProps) => {
   const [removeLoading, setRemoveLoading] = React.useState(false)
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
 
-  const { SignOut } = useContext(AuthContext)
+  const { SignOut, user } = useContext(AuthContext)
 
   const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false)
@@ -289,7 +289,10 @@ const TodoList = (props: TodoListProps) => {
                   <Divider />
                   <MenuItem title={'Logg ut'} onClick={SignOut}>
                     <Logout03Icon />
-                    <p style={{ margin: '0rem 1rem' }}>Logg ut</p>
+                    <Stack>
+                      <p style={{ margin: '0rem 1rem' }}>Logg ut</p>
+                      {user && <p style={{ fontSize: '0.8rem', margin: '0rem 1rem' }}>{user.email}</p>}
+                    </Stack>
                   </MenuItem>
                 </Menu>
               </Stack>

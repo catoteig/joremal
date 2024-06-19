@@ -126,7 +126,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
                   disabled={!tagInput.trim()}
                   title={'Opprett'}
                   size="medium"
-                  sx={{ whiteSpace: 'nowrap', bgcolor: '#ef767a', color: 'white' }}
+                  sx={{ whiteSpace: 'nowrap', bgcolor: '#ef767a', color: 'white', '&:hover': { bgcolor: '#55868C' } }}
                 >
                   <PlusSignIcon />
                 </IconButton>
@@ -158,13 +158,12 @@ const TodoSubmit = (props: TodoSubmitProps) => {
           </Card>
         </Stack>
         <Box flexDirection={'column'} textAlign={'right'}>
-          <p>-{inputFieldValue}-</p>
           <IconButton
             type="submit"
             disabled={!inputFieldValue}
             title={'Opprett'}
             size="large"
-            sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white' }}
+            sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: '#55868C' } }}
           >
             <SentIcon />
           </IconButton>

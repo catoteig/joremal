@@ -14,16 +14,16 @@ export interface UserFormValues {
 export interface IAuth {
   user: User | null
   loading: boolean
-  LogIn: (creds: LoginFormValues) => Promise<void>
-  SignUp: (creds: UserFormValues) => void
+  LogIn: (creds: LoginFormValues) => Promise<null | string>
+  SignUp: (creds: UserFormValues) => Promise<null | string>
   SignOut: () => Promise<void>
 }
 
 export const AuthContext = createContext<IAuth>({
   user: null,
   loading: false,
-  LogIn:async () => {},
-  SignUp: () => {},
+  LogIn: async () => null,
+  SignUp: async () => null,
   SignOut: async () => {},
 })
 

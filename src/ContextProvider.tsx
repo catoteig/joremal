@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth'
 import { AuthContext, IAuth, LoginFormValues, UserFormValues } from './AuthContext.ts'
+import { errorText } from './assets/authErrorMapping.tsx'
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
@@ -26,35 +27,38 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return unsubscribe
   }, [auth])
 
-  const LogIn = async (creds: LoginFormValues) => {
+  const LogIn = async (creds: LoginFormValues): Promise<null | string> => {
     setIsLoading(true)
-    await signInWithEmailAndPassword(auth, creds.email, creds.password)
+    return signInWithEmailAndPassword(auth, creds.email, creds.password)
       .then((userCredential) => {
         const { user } = userCredential
         if (user) setCurrentUser(user)
         navigate('/')
+        console.log('CRED:', userCredential)
         setIsLoading(false)
+        return null
       })
       .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        throw new Error(`${errorCode} ${errorMessage}`)
+        setIsLoading(false)
+        console.log('blah')
+        return errorText(error.code)
       })
   }
 
-  const SignUp = (creds: UserFormValues) => {
+  const SignUp = (creds: UserFormValues): Promise<null | string> => {
     setIsLoading(true)
-    createUserWithEmailAndPassword(auth, creds.email, creds.password)
+    return createUserWithEmailAndPassword(auth, creds.email, creds.password)
       .then((userCredential) => {
         const { user } = userCredential
         console.log('Signed up user:', user)
         navigate('/login')
         setIsLoading(false)
+        return null
       })
       .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        throw new Error(`${errorCode} - ${errorMessage}`)
+        console.log('catch', error.code)
+        setIsLoading(false)
+        return errorText(error.code)
       })
   }
 
