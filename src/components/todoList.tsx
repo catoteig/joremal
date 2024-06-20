@@ -7,7 +7,6 @@ import {
   Alert,
   Badge,
   Box,
-  Checkbox,
   Chip,
   CircularProgress,
   Container,
@@ -31,6 +30,7 @@ import {
   Menu01Icon,
   NoteAddIcon,
   PasswordValidationIcon,
+  PoopIcon,
   RowDeleteIcon,
   SquareIcon,
   Tag01Icon,
@@ -336,14 +336,9 @@ const TodoList = (props: TodoListProps) => {
                       }}
                       expandIcon={<ArrowDown01Icon />}
                     >
-                      <Checkbox
-                        icon={<SquareIcon />}
-                        checkedIcon={<CheckmarkSquare02Icon />}
-                        onClick={handleTodoClick}
-                        checked={todo.complete}
-                        disableRipple
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
+                      <IconButton type={'button'} onClick={handleTodoClick}>
+                        {todo.complete ? <CheckmarkSquare02Icon /> : <SquareIcon />}
+                      </IconButton>
                       <Typography component={'p'} alignSelf={'center'} id={labelId} padding={'0 1rem'}>
                         {todo.name}
                       </Typography>
@@ -351,26 +346,9 @@ const TodoList = (props: TodoListProps) => {
                     <AccordionDetails
                       sx={{
                         padding: 0,
-                        backgroundColor: todo.complete ? '#BDCCA48C' : 'transparent',
                       }}
                     >
-                      <Grid
-                        container
-                        alignItems={'stretch'}
-                        borderBottom={'1px solid lightgrey'}
-                      >
-                        {/*<Grid xs={2}>*/}
-                        {/*  <Box textAlign={'center'} sx={{ padding: '0.5rem' }}>*/}
-                        {/*    <Checkbox*/}
-                        {/*      icon={<SquareIcon />}*/}
-                        {/*      checkedIcon={<CheckmarkSquare02Icon />}*/}
-                        {/*      onClick={handleTodoClick}*/}
-                        {/*      tabIndex={-1}*/}
-                        {/*      disableRipple*/}
-                        {/*      inputProps={{ 'aria-labelledby': labelId }}*/}
-                        {/*    />*/}
-                        {/*  </Box>*/}
-                        {/*</Grid>*/}
+                      <Grid container alignItems={'stretch'} borderBottom={'1px solid lightgrey'}>
                         <Grid xs={10}>
                           <Stack sx={{ padding: '1rem' }}>
                             {todo.notes && <ListItemText id={labelId} primary={todo.notes} />}
@@ -385,7 +363,12 @@ const TodoList = (props: TodoListProps) => {
                               >
                                 {todo.list.map((tagName) => (
                                   <Grid>
-                                    <Chip label={tagName} color={'warning'} variant={'outlined'} />
+                                    <Chip
+                                      icon={tagName === 'Marit' ? <PoopIcon color={'#953636'} /> : undefined}
+                                      label={tagName}
+                                      color={'warning'}
+                                      variant={'outlined'}
+                                    />
                                   </Grid>
                                 ))}
                               </Grid>
