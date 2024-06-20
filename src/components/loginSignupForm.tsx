@@ -1,4 +1,4 @@
-import { Alert, Box, Grow, IconButton, Link, Stack, TextField, Zoom } from '@mui/material'
+import { Alert, Box, IconButton, Link, Stack, TextField, Zoom } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 import { SentIcon } from 'hugeicons-react'
@@ -63,7 +63,7 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
             />
             {error && (
               <Zoom in={true} key="errormessage">
-                <Alert variant={'filled'} severity="error">
+                <Alert variant={'outlined'} severity="error">
                   {error}
                 </Alert>
               </Zoom>

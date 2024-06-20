@@ -14,6 +14,7 @@ import { Award04Icon, NoteAddIcon, WorkoutKickingIcon } from 'hugeicons-react'
 import { useAuth } from './AuthContext.ts'
 import { Navigate } from 'react-router-dom'
 import firestore = firebase.firestore
+import ChangeUserData from './components/changeUserData.tsx'
 
 export type TodoItem = {
   id: string
@@ -38,6 +39,7 @@ const Home = () => {
   const [addModalVisible, setAddModalVisible] = React.useState<boolean>(false)
   const todoNameRef = useRef<HTMLInputElement>(null)
   const { user } = useAuth()
+  const [userDataVisible, setUserDataVisible] = useState<boolean>(false)
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth)
@@ -61,6 +63,9 @@ const Home = () => {
 
   const handleAddModalVisible = () => {
     setAddModalVisible(!addModalVisible)
+  }
+  const handleUserDataModalVisible = () => {
+    setUserDataVisible(!userDataVisible)
   }
   const handleAddTodo = (newTodo: TodoItem) => {
     fbCreate(newTodo).then(() => handleFetch())
@@ -236,6 +241,8 @@ const Home = () => {
             setAddVisible={handleAddModalVisible}
             tagFilter={tagFilter}
             setTagFilter={setTagFilter}
+            userDataVisible={userDataVisible}
+            setUserDataVisible={handleUserDataModalVisible}
           />
         </Grid>
       </Grid>
@@ -262,6 +269,9 @@ const Home = () => {
           handleAddTodo={handleAddTodo}
           handleAddModalVisible={handleAddModalVisible}
         />
+      </Modal>
+      <Modal open={userDataVisible} onClose={handleUserDataModalVisible}>
+        <ChangeUserData />
       </Modal>
     </>
   )

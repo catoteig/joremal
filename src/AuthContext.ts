@@ -17,6 +17,7 @@ export interface IAuth {
   LogIn: (creds: LoginFormValues) => Promise<null | string>
   SignUp: (creds: UserFormValues) => Promise<null | string>
   SignOut: () => Promise<void>
+  ChangePassword: (newPassword: string) => Promise<null | string>
 }
 
 export const AuthContext = createContext<IAuth>({
@@ -25,6 +26,7 @@ export const AuthContext = createContext<IAuth>({
   LogIn: async () => null,
   SignUp: async () => null,
   SignOut: async () => {},
+  ChangePassword: async () => null,
 })
 
 export const useAuth = (): IAuth => {

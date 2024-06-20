@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useContext } from 'react'
 import {
   Accordion,
   AccordionDetails,
@@ -32,6 +33,7 @@ import {
   Logout03Icon,
   Menu01Icon,
   NoteAddIcon,
+  PasswordValidationIcon,
   RowDeleteIcon,
   SquareIcon,
   Tag01Icon,
@@ -39,7 +41,6 @@ import {
   ZapIcon,
 } from 'hugeicons-react'
 import { AuthContext } from '../AuthContext.ts'
-import { useContext } from 'react'
 
 export interface TodoListProps {
   todos: TodoItem[]
@@ -59,6 +60,8 @@ export interface TodoListProps {
   addVisible: boolean
   setTagFilter: (tags: string[]) => void
   tagFilter: string[]
+  userDataVisible: boolean
+  setUserDataVisible: () => void
 }
 
 const TodoList = (props: TodoListProps) => {
@@ -79,6 +82,7 @@ const TodoList = (props: TodoListProps) => {
     addVisible,
     setTagFilter,
     tagFilter,
+    setUserDataVisible,
   } = props
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
@@ -287,11 +291,17 @@ const TodoList = (props: TodoListProps) => {
                     <p style={{ margin: '0rem 1rem' }}>Lag tulleoppgaver</p>
                   </MenuItem>
                   <Divider />
+                  <MenuItem title={'Endre passord'} onClick={setUserDataVisible}>
+                    <PasswordValidationIcon />
+                    <p style={{ margin: '0rem 1rem' }}>Endre passord</p>
+                  </MenuItem>
                   <MenuItem title={'Logg ut'} onClick={SignOut}>
                     <Logout03Icon />
                     <Stack>
                       <p style={{ margin: '0rem 1rem' }}>Logg ut</p>
-                      {user && <p style={{ fontSize: '0.8rem', margin: '0rem 1rem' }}>{user.email}</p>}
+                      {user && (
+                        <p style={{ fontSize: '0.8rem', margin: '0rem 1rem', color: 'dimgrey' }}>{user.email}</p>
+                      )}
                     </Stack>
                   </MenuItem>
                 </Menu>
@@ -375,12 +385,15 @@ const TodoList = (props: TodoListProps) => {
                           <Grid sx={{ padding: 0 }} width={'100%'} height={'100%'}>
                             {todo.notes && <ListItemText id={labelId} primary={todo.notes} />}
                             {todo.list.length > 0 && (
-                              <Grid container spacing={1} flex={'auto'} direction={'row'} padding={0}>
-                                {todo.list.map((e) => (
+                              <Grid container spacing={1} flex={'auto'} direction={'row'} alignItems={'center'} padding={0}>
+                                {todo.list.map((tagName) => (
                                   <Grid>
-                                    <Chip label={e} color={'warning'} variant={'outlined'} />
+                                    <Chip label={tagName} color={'warning'} variant={'outlined'} />
                                   </Grid>
                                 ))}
+                                  {/*<IconButton>*/}
+                                  {/*  <PencilEdit02Icon />*/}
+                                  {/*</IconButton>*/}
                               </Grid>
                             )}
                             {(todo.notes || todo.list.length > 0) && (

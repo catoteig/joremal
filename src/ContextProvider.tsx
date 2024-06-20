@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   User,
   onAuthStateChanged,
+  updatePassword,
 } from 'firebase/auth'
 import { AuthContext, IAuth, LoginFormValues, UserFormValues } from './AuthContext.ts'
 import { errorText } from './assets/authErrorMapping.tsx'
@@ -43,7 +44,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
   }
 
-  const SignUp = (creds: UserFormValues): Promise<null | string> => {
+  const SignUp = async (creds: UserFormValues): Promise<null | string> => {
     setIsLoading(true)
     return createUserWithEmailAndPassword(auth, creds.email, creds.password)
       .then(() => {
@@ -69,12 +70,26 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false)
   }
 
+  const ChangePassword = async (newPassword: string): Promise<null | string> => {
+    setIsLoading(true)
+    return updatePassword(auth.currentUser!, newPassword)
+      .then(() => {
+        setIsLoading(false)
+        return null
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        return errorText(error.code)
+      })
+  }
+
   const authValues: IAuth = {
     user: currentUser,
     loading: isLoading,
     LogIn,
     SignUp,
     SignOut,
+    ChangePassword,
   }
 
   return <AuthContext.Provider value={authValues}>{!isAuthLoading && children}</AuthContext.Provider>

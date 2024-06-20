@@ -67,7 +67,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
     <Box
       sx={{
         position: 'absolute',
-        bottom: '4rem',
+        top: '30%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 'calc(100% - 4rem)',
