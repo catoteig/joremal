@@ -3,7 +3,12 @@ import { Alert, Box, IconButton, InputAdornment, Stack, TextField, Zoom } from '
 import { PasswordValidationIcon, SentIcon } from 'hugeicons-react'
 import { useAuth } from '../AuthContext.ts'
 
-const ChangeUserData = () => {
+export interface ChangeUserDataProps {
+  setVisible: (visible: boolean) => void
+}
+
+const ChangeUserData = (props: ChangeUserDataProps) => {
+  const { setVisible } = props
   const auth = useAuth()
   const { ChangePassword } = auth
 
@@ -21,7 +26,11 @@ const ChangeUserData = () => {
     if (!passwordFieldValue.trim()) return
     const res = await ChangePassword(passwordFieldValue)
 
-    if (res) setError(res)
+    if (res) {
+      setError(res)
+    } else {
+      setVisible(false)
+    }
   }
 
   return (
@@ -43,6 +52,23 @@ const ChangeUserData = () => {
         <Stack direction={'column'} spacing={2} sx={{ paddingTop: 2 }}>
           <TextField
             label={'Nytt passord'}
+            variant="outlined"
+            id="passwordInput"
+            type="password"
+            value={passwordFieldValue}
+            onChange={handlePasswordFieldChange}
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PasswordValidationIcon />
+                </InputAdornment>
+              ),
+            }}
+            autoFocus
+          />
+          <TextField
+            label={'Gjenta passord'}
             variant="outlined"
             id="passwordInput"
             type="password"

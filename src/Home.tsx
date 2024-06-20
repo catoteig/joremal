@@ -271,7 +271,7 @@ const Home = () => {
         />
       </Modal>
       <Modal open={userDataVisible} onClose={handleUserDataModalVisible}>
-        <ChangeUserData />
+        <ChangeUserData setVisible={setUserDataVisible} />
       </Modal>
     </>
   )

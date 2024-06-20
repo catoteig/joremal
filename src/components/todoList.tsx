@@ -13,9 +13,6 @@ import {
   Container,
   Divider,
   IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
@@ -37,10 +34,10 @@ import {
   RowDeleteIcon,
   SquareIcon,
   Tag01Icon,
-  Tick02Icon,
   ZapIcon,
 } from 'hugeicons-react'
 import { AuthContext } from '../AuthContext.ts'
+import Typography from '@mui/material/Typography'
 
 export interface TodoListProps {
   todos: TodoItem[]
@@ -88,7 +85,7 @@ const TodoList = (props: TodoListProps) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState('')
   const [removeLoading, setRemoveLoading] = React.useState(false)
-  const [expanded, setExpanded] = React.useState<string | false>('panel1')
+  const [expanded, setExpanded] = React.useState<string | false>(false)
 
   const { SignOut, user } = useContext(AuthContext)
 
@@ -339,12 +336,17 @@ const TodoList = (props: TodoListProps) => {
                       }}
                       expandIcon={<ArrowDown01Icon />}
                     >
-                      {todo.complete ? (
-                        <ListItemIcon children={<Tick02Icon />} sx={{ minWidth: '0', paddingRight: '0.5rem' }} />
-                      ) : (
-                        <></>
-                      )}
-                      <ListItemText id={labelId} primary={todo.name} />
+                      <Checkbox
+                        icon={<SquareIcon />}
+                        checkedIcon={<CheckmarkSquare02Icon />}
+                        onClick={handleTodoClick}
+                        checked={todo.complete}
+                        disableRipple
+                        inputProps={{ 'aria-labelledby': labelId }}
+                      />
+                      <Typography component={'p'} alignSelf={'center'} id={labelId} padding={'0 1rem'}>
+                        {todo.name}
+                      </Typography>
                     </AccordionSummary>
                     <AccordionDetails
                       sx={{
@@ -352,61 +354,69 @@ const TodoList = (props: TodoListProps) => {
                         backgroundColor: todo.complete ? '#BDCCA48C' : 'transparent',
                       }}
                     >
-                      <ListItem
-                        key={todo.id}
-                        secondaryAction={
-                          <Stack width={'100%'}>
-                            <IconButton
-                              edge="end"
-                              aria-label="delete"
-                              onClick={() => handleRemoveClick(todo)}
-                              id={'listItemDropdown'}
-                            >
-                              <Delete04Icon color="disabled" />
-                            </IconButton>
-                          </Stack>
-                        }
-                        disablePadding
-                        color=""
+                      <Grid
+                        container
+                        alignItems={'stretch'}
+                        borderBottom={'1px solid lightgrey'}
                       >
-                        <ListItemButton role={undefined} onClick={handleTodoClick} dense sx={{ alignItems: 'center' }}>
-                          <ListItemIcon>
-                            <Checkbox
-                              icon={<SquareIcon />}
-                              checkedIcon={<CheckmarkSquare02Icon />}
-                              edge="start"
-                              checked={todo.complete}
-                              tabIndex={-1}
-                              disableRipple
-                              inputProps={{ 'aria-labelledby': labelId }}
-                              sx={{ paddingLeft: 2 }}
-                            />
-                          </ListItemIcon>
-                          <Grid sx={{ padding: 0 }} width={'100%'} height={'100%'}>
+                        {/*<Grid xs={2}>*/}
+                        {/*  <Box textAlign={'center'} sx={{ padding: '0.5rem' }}>*/}
+                        {/*    <Checkbox*/}
+                        {/*      icon={<SquareIcon />}*/}
+                        {/*      checkedIcon={<CheckmarkSquare02Icon />}*/}
+                        {/*      onClick={handleTodoClick}*/}
+                        {/*      tabIndex={-1}*/}
+                        {/*      disableRipple*/}
+                        {/*      inputProps={{ 'aria-labelledby': labelId }}*/}
+                        {/*    />*/}
+                        {/*  </Box>*/}
+                        {/*</Grid>*/}
+                        <Grid xs={10}>
+                          <Stack sx={{ padding: '1rem' }}>
                             {todo.notes && <ListItemText id={labelId} primary={todo.notes} />}
                             {todo.list.length > 0 && (
-                              <Grid container spacing={1} flex={'auto'} direction={'row'} alignItems={'center'} padding={0}>
+                              <Grid
+                                container
+                                spacing={1}
+                                flex={'auto'}
+                                direction={'row'}
+                                alignItems={'center'}
+                                padding={0}
+                              >
                                 {todo.list.map((tagName) => (
                                   <Grid>
                                     <Chip label={tagName} color={'warning'} variant={'outlined'} />
                                   </Grid>
                                 ))}
-                                  {/*<IconButton>*/}
-                                  {/*  <PencilEdit02Icon />*/}
-                                  {/*</IconButton>*/}
                               </Grid>
                             )}
                             {(todo.notes || todo.list.length > 0) && (
                               <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
                             )}
-                            <ListItemText
-                              sx={{ fontStyle: 'italic', margin: 0, marginTop: 0 }}
+                            <Typography
+                              component={'p'}
+                              fontStyle={'italic'}
+                              fontSize={'0.9rem'}
                               id={labelId}
-                              primary={`${created}${updatedString}`}
-                            />
-                          </Grid>
-                        </ListItemButton>
-                      </ListItem>
+                            >{`${created}${updatedString}`}</Typography>
+                          </Stack>
+                        </Grid>
+                        <Grid xs={2}>
+                          <Stack direction="column" spacing={'1rem'} sx={{ padding: '0.5rem' }}>
+                            <IconButton
+                              aria-label="delete"
+                              onClick={() => handleRemoveClick(todo)}
+                              id={'listItemDropdown'}
+                              size={'large'}
+                            >
+                              <Delete04Icon color="disabled" />
+                            </IconButton>
+                            {/*<IconButton>*/}
+                            {/*  <PencilEdit02Icon />*/}
+                            {/*</IconButton>*/}
+                          </Stack>
+                        </Grid>
+                      </Grid>
                     </AccordionDetails>
                   </Accordion>
                 )
