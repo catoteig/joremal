@@ -10,7 +10,7 @@ export interface ChangeUserDataProps {
 const ChangeUserData = (props: ChangeUserDataProps) => {
   const { setVisible } = props
   const auth = useAuth()
-  const { ChangePassword } = auth
+  const { ChangePassword, user } = auth
 
   const [passwordFieldValue, setPasswordFieldValue] = useState<string>('')
   const [error, setError] = useState<null | string>(null)
@@ -50,6 +50,17 @@ const ChangeUserData = (props: ChangeUserDataProps) => {
     >
       <form onSubmit={onFormSubmit}>
         <Stack direction={'column'} spacing={2} sx={{ paddingTop: 2 }}>
+          {user && (
+            <TextField
+              label={'E-post'}
+              variant="outlined"
+              id="email"
+              type="text"
+              value={user.email}
+              fullWidth
+              disabled
+            />
+          )}
           <TextField
             label={'Nytt passord'}
             variant="outlined"
