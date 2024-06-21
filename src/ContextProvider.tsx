@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   createUserWithEmailAndPassword,
   getAuth,
-  signInWithEmailAndPassword,
-  User,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   updatePassword,
+  User,
 } from 'firebase/auth'
 import { AuthContext, IAuth, LoginFormValues, UserFormValues } from './AuthContext.ts'
 import { errorText } from './assets/authErrorMapping.tsx'
@@ -83,6 +83,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
   }
 
+  const GetCurrentUser = async (): Promise<null | User> => {
+    setIsLoading(true)
+    const usr = currentUser
+    if (usr) {
+      setIsLoading(false)
+      return usr
+    }
+    return null
+  }
+
   const authValues: IAuth = {
     user: currentUser,
     loading: isLoading,
@@ -90,6 +100,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     SignUp,
     SignOut,
     ChangePassword,
+    GetCurrentUser,
   }
 
   return <AuthContext.Provider value={authValues}>{!isAuthLoading && children}</AuthContext.Provider>

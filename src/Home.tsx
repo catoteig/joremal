@@ -15,6 +15,7 @@ import { useAuth } from './AuthContext.ts'
 import { Navigate } from 'react-router-dom'
 import firestore = firebase.firestore
 import ChangeUserData from './components/changeUserData.tsx'
+import ParticleElement from './components/particleElement.tsx'
 
 export type TodoItem = {
   id: string
@@ -171,6 +172,7 @@ const Home = () => {
     <Navigate to="/login" />
   ) : (
     <>
+      <ParticleElement/>
       <Grid
         container
         spacing={'1rem'}
@@ -246,23 +248,14 @@ const Home = () => {
           />
         </Grid>
       </Grid>
-      {!addModalVisible && (
-        <>
-          {/*<SpeedDialCustom />*/}
-          <Fab
-            aria-label="Create"
-            color="warning"
-            sx={
-              hasTodos
-                ? { position: 'absolute', bottom: '3rem', right: '3rem', color: '#F4ECD6' }
-                : { position: 'absolute', top: '7rem', right: 'calc(50% - 8rem)' }
-            }
-            onClick={handleAddModalVisible}
-          >
-            <NoteAddIcon />
-          </Fab>
-        </>
-      )}
+      <Fab
+        aria-label="Create"
+        color="warning"
+        sx={{ position: 'absolute', bottom: '3rem', right: '3rem', color: '#F4ECD6' }}
+        onClick={handleAddModalVisible}
+      >
+        <NoteAddIcon />
+      </Fab>
       <Modal open={addModalVisible} onClose={handleAddModalVisible}>
         <TodoSubmit
           todoNameRef={todoNameRef}

@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useRef, useState } from 'react'
 import { Alert, Box, IconButton, InputAdornment, Stack, TextField, Zoom } from '@mui/material'
 import { PasswordValidationIcon, SentIcon } from 'hugeicons-react'
 import { useAuth } from '../AuthContext.ts'
@@ -16,6 +16,8 @@ const ChangeUserData = (props: ChangeUserDataProps) => {
   const [error, setError] = useState<null | string>(null)
   const resetError = () => setError(null)
 
+  const passwordRef = useRef<HTMLInputElement>(null)
+
   const handlePasswordFieldChange = (e: { target: { value: SetStateAction<string> } }) => {
     resetError()
     setPasswordFieldValue(e.target.value)
@@ -28,6 +30,7 @@ const ChangeUserData = (props: ChangeUserDataProps) => {
 
     if (res) {
       setError(res)
+      if (passwordRef.current) passwordRef.current.value = ''
     } else {
       setVisible(false)
     }
@@ -69,6 +72,7 @@ const ChangeUserData = (props: ChangeUserDataProps) => {
             value={passwordFieldValue}
             onChange={handlePasswordFieldChange}
             fullWidth
+            ref={passwordRef}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -77,22 +81,6 @@ const ChangeUserData = (props: ChangeUserDataProps) => {
               ),
             }}
             autoFocus
-          />
-          <TextField
-            label={'Gjenta passord'}
-            variant="outlined"
-            id="passwordInput"
-            type="password"
-            value={passwordFieldValue}
-            onChange={handlePasswordFieldChange}
-            fullWidth
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PasswordValidationIcon />
-                </InputAdornment>
-              ),
-            }}
           />
           {error && (
             <Zoom in={true} key="errormessage">

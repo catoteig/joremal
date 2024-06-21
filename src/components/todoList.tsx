@@ -30,7 +30,7 @@ import {
   Menu01Icon,
   NoteAddIcon,
   PasswordValidationIcon,
-  PoopIcon,
+  // PoopIcon,
   RowDeleteIcon,
   SquareIcon,
   Tag01Icon,
@@ -99,6 +99,9 @@ const TodoList = (props: TodoListProps) => {
     setSnackbarMessage(`${todo.name} slettet`)
     if (hasTodos) setSnackbarOpen(true)
   }
+  // const handleEditClick = (todo: TodoItem) => {
+  //   setAddVisible()
+  // }
 
   const handleRemoveAllClick = () => {
     removeAllTodo()
@@ -199,7 +202,6 @@ const TodoList = (props: TodoListProps) => {
               height={'3.3rem'}
             >
               <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
-                {/*<p>{orderAsc ? 'True' : 'False'}</p>*/}
                 <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible} title={'Opprett'}>
                   <NoteAddIcon />
                 </IconButton>
@@ -233,13 +235,13 @@ const TodoList = (props: TodoListProps) => {
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                   {tagFilter.length > 0 && (
-                    <>
+                    <div>
                       <MenuItem onClick={removeTagFilter} title={'Vis alle'}>
                         <FilterRemoveIcon />
                         <p style={{ margin: '0rem 1rem' }}>Vis alle</p>
                       </MenuItem>
                       <Divider />
-                    </>
+                    </div>
                   )}
                   {tags.map((tag) => (
                     <MenuItem onClick={() => handleTagFilter(tag)} title={`Tag ${tag}`}>
@@ -332,7 +334,7 @@ const TodoList = (props: TodoListProps) => {
                   >
                     <AccordionSummary
                       sx={{
-                        backgroundColor: todo.complete ? '#BDCCA48C' : 'transparent',
+                        backgroundColor: todo.complete ? '#BDCCA44F' : 'transparent',
                       }}
                       expandIcon={<ArrowDown01Icon />}
                     >
@@ -364,7 +366,7 @@ const TodoList = (props: TodoListProps) => {
                                 {todo.list.map((tagName) => (
                                   <Grid>
                                     <Chip
-                                      icon={tagName === 'Marit' ? <PoopIcon color={'#953636'} /> : undefined}
+                                      // icon={tagName === 'Marit' ? <PoopIcon color={'#953636'} /> : undefined}
                                       label={tagName}
                                       color={'warning'}
                                       variant={'outlined'}
@@ -385,8 +387,18 @@ const TodoList = (props: TodoListProps) => {
                           </Stack>
                         </Grid>
                         <Grid xs={2}>
-                          <Stack direction="column" spacing={'1rem'} sx={{ padding: '0.5rem' }}>
+                          <Stack direction="column" spacing={'.5rem'} sx={{ padding: '0.5rem' }}>
+                            {/*<IconButton*/}
+                            {/*  title={'Rediger'}*/}
+                            {/*  aria-label="edit"*/}
+                            {/*  onClick={() => handleEditClick(todo)}*/}
+                            {/*  id={'listItemDropdown'}*/}
+                            {/*  size={'large'}*/}
+                            {/*>*/}
+                            {/*  <PencilEdit02Icon />*/}
+                            {/*</IconButton>*/}
                             <IconButton
+                              title={'Slett'}
                               aria-label="delete"
                               onClick={() => handleRemoveClick(todo)}
                               id={'listItemDropdown'}
@@ -394,9 +406,6 @@ const TodoList = (props: TodoListProps) => {
                             >
                               <Delete04Icon color="disabled" />
                             </IconButton>
-                            {/*<IconButton>*/}
-                            {/*  <PencilEdit02Icon />*/}
-                            {/*</IconButton>*/}
                           </Stack>
                         </Grid>
                       </Grid>
