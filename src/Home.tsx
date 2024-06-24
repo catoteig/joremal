@@ -13,9 +13,9 @@ import firebase from 'firebase/compat/app'
 import { Award04Icon, NoteAddIcon, WorkoutKickingIcon } from 'hugeicons-react'
 import { useAuth } from './AuthContext.ts'
 import { Navigate } from 'react-router-dom'
-import firestore = firebase.firestore
 import ChangeUserData from './components/changeUserData.tsx'
 import ParticleElement from './components/particleElement.tsx'
+import firestore = firebase.firestore
 
 export type TodoItem = {
   id: string
@@ -172,7 +172,6 @@ const Home = () => {
     <Navigate to="/login" />
   ) : (
     <>
-      <ParticleElement/>
       <Grid
         container
         spacing={'1rem'}
@@ -251,7 +250,7 @@ const Home = () => {
       <Fab
         aria-label="Create"
         color="warning"
-        sx={{ position: 'absolute', bottom: '3rem', right: '3rem', color: '#F4ECD6' }}
+        sx={{ position: 'absolute', bottom: '3rem', right: '3rem', color: 'primary.light' }}
         onClick={handleAddModalVisible}
       >
         <NoteAddIcon />
@@ -266,6 +265,7 @@ const Home = () => {
       <Modal open={userDataVisible} onClose={handleUserDataModalVisible}>
         <ChangeUserData setVisible={setUserDataVisible} />
       </Modal>
+      <ParticleElement />
     </>
   )
 }

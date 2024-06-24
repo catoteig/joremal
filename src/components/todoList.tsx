@@ -23,14 +23,13 @@ import { TodoItem } from '../Home.tsx'
 import {
   ArrowDown01Icon,
   CheckListIcon,
-  CheckmarkSquare02Icon,
+  CheckmarkSquare04Icon,
   Delete04Icon,
   FilterRemoveIcon,
   Logout03Icon,
   Menu01Icon,
   NoteAddIcon,
   PasswordValidationIcon,
-  // PoopIcon,
   RowDeleteIcon,
   SquareIcon,
   Tag01Icon,
@@ -38,6 +37,7 @@ import {
 } from 'hugeicons-react'
 import { AuthContext } from '../AuthContext.ts'
 import Typography from '@mui/material/Typography'
+import { themeOpts } from '../theme.tsx'
 
 export interface TodoListProps {
   todos: TodoItem[]
@@ -121,6 +121,7 @@ const TodoList = (props: TodoListProps) => {
   const handleToggleAll = () => {
     toggleAllTodos()
     setMoreMenuAnchorEl(null)
+    console.log(moreMenuAnchorEl)
     setExpanded(false)
   }
 
@@ -148,6 +149,7 @@ const TodoList = (props: TodoListProps) => {
   }
   const handleMoreMenuClose = () => {
     setMoreMenuAnchorEl(null)
+    console.log(moreMenuAnchorEl)
   }
 
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -173,6 +175,11 @@ const TodoList = (props: TodoListProps) => {
     }
   }
 
+  const handleChangePasswordClick =()=>{
+    setUserDataVisible()
+    handleMoreMenuClose()
+  }
+
   const removeTagFilter = () => setTagFilter([])
 
   return (
@@ -181,7 +188,7 @@ const TodoList = (props: TodoListProps) => {
         component={'section'}
         sx={{ border: '1px dashed grey', borderRadius: 2 }}
         height={'100%'}
-        bgcolor={'#EDF4ED'}
+        bgcolor={'secondary.light'}
       >
         {loading ? (
           <Grid xs={12} sx={{ padding: '1rem' }} height={'100%'} width={'100%'}>
@@ -197,7 +204,7 @@ const TodoList = (props: TodoListProps) => {
                 padding: 0,
                 paddingTop: 1,
                 verticalAlign: 'middle',
-                borderBottom: '1px solid lightgrey',
+                borderBottom: '1px dashed lightgrey',
               }}
               height={'3.3rem'}
             >
@@ -236,7 +243,7 @@ const TodoList = (props: TodoListProps) => {
                 >
                   {tagFilter.length > 0 && (
                     <div>
-                      <MenuItem onClick={removeTagFilter} title={'Vis alle'}>
+                      <MenuItem key={'all'} onClick={removeTagFilter} title={'Vis alle'}>
                         <FilterRemoveIcon />
                         <p style={{ margin: '0rem 1rem' }}>Vis alle</p>
                       </MenuItem>
@@ -244,8 +251,8 @@ const TodoList = (props: TodoListProps) => {
                     </div>
                   )}
                   {tags.map((tag) => (
-                    <MenuItem onClick={() => handleTagFilter(tag)} title={`Tag ${tag}`}>
-                      <Tag01Icon color={tagFilter.includes(tag) ? '#ef767a' : undefined} />
+                    <MenuItem key={tag} onClick={() => handleTagFilter(tag)} title={`Tag ${tag}`}>
+                      <Tag01Icon color={tagFilter.includes(tag) ? 'warning' : undefined} />
                       <p style={{ margin: '0rem 1rem' }}>{tagFilter.includes(tag) ? <b>{tag}</b> : tag}</p>
                     </MenuItem>
                   ))}
@@ -271,7 +278,7 @@ const TodoList = (props: TodoListProps) => {
                   }}
                   transformOrigin={{ horizontal: 'left', vertical: 'top' }}
                   anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-                  sx={{ color: '#f4ecd6' }}
+                  sx={{ color: 'primary.light' }}
                 >
                   <MenuItem onClick={handleRemoveAllClick} disabled={!completeTodos} title={'Slett utførte'}>
                     <RowDeleteIcon />
@@ -290,7 +297,7 @@ const TodoList = (props: TodoListProps) => {
                     <p style={{ margin: '0rem 1rem' }}>Lag tulleoppgaver</p>
                   </MenuItem>
                   <Divider />
-                  <MenuItem title={'Endre passord'} onClick={setUserDataVisible}>
+                  <MenuItem title={'Endre passord'} onClick={handleChangePasswordClick}>
                     <PasswordValidationIcon />
                     <p style={{ margin: '0rem 1rem' }}>Endre passord</p>
                   </MenuItem>
@@ -315,6 +322,10 @@ const TodoList = (props: TodoListProps) => {
                   ? new Date(todo.updated.seconds * 1000).toLocaleDateString()
                   : null
                 const updatedString = updated && todo.complete ? ` - fullført ${updated}` : ''
+                const isExpanded = expanded === todo.id
+
+                // @ts-expect-error This color does exist in theme
+                const checkedIconColor = themeOpts.palette.secondary.dark
 
                 return removeLoading ? (
                   <CircularProgress />
@@ -327,19 +338,23 @@ const TodoList = (props: TodoListProps) => {
                       backgroundColor: 'transparent',
                       '&.Mui-expanded:before': {
                         opacity: '100',
+                        backgroundColor: 'lightgrey',
+                      },
+                      '&:before': {
+                        backgroundColor: 'transparent',
                       },
                     }}
-                    expanded={expanded === todo.id}
+                    expanded={isExpanded}
                     onChange={handleChange(todo.id)}
                   >
                     <AccordionSummary
                       sx={{
-                        backgroundColor: todo.complete ? '#BDCCA44F' : 'transparent',
+                        backgroundColor: isExpanded ? '#FAFAFA' : 'transparent',
                       }}
                       expandIcon={<ArrowDown01Icon />}
                     >
                       <IconButton type={'button'} onClick={handleTodoClick}>
-                        {todo.complete ? <CheckmarkSquare02Icon /> : <SquareIcon />}
+                        {todo.complete ? <CheckmarkSquare04Icon color={checkedIconColor} /> : <SquareIcon />}
                       </IconButton>
                       <Typography component={'p'} alignSelf={'center'} id={labelId} padding={'0 1rem'}>
                         {todo.name}
@@ -347,10 +362,12 @@ const TodoList = (props: TodoListProps) => {
                     </AccordionSummary>
                     <AccordionDetails
                       sx={{
+                        bgcolor: '#FAFAFA',
                         padding: 0,
+                        '&.MuiAccordionDetails-root': { borderBottom: '1px solid lightgrey' },
                       }}
                     >
-                      <Grid container alignItems={'stretch'} borderBottom={'1px solid lightgrey'}>
+                      <Grid container alignItems={'stretch'}>
                         <Grid xs={10}>
                           <Stack sx={{ padding: '1rem' }}>
                             {todo.notes && <ListItemText id={labelId} primary={todo.notes} />}
@@ -376,7 +393,7 @@ const TodoList = (props: TodoListProps) => {
                               </Grid>
                             )}
                             {(todo.notes || todo.list.length > 0) && (
-                              <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
+                              <Divider  sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
                             )}
                             <Typography
                               component={'p'}
@@ -418,7 +435,7 @@ const TodoList = (props: TodoListProps) => {
               open={snackbarOpen}
               autoHideDuration={3000}
               onClose={handleSnackbarClose}
-              anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
               sx={{ background: 'primary.main', borderRadius: 2 }}
             >
               <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>

@@ -45,7 +45,7 @@ const ChangeUserData = (props: ChangeUserDataProps) => {
         transform: 'translate(-50%, -50%)',
         width: 'calc(100% - 4rem)',
         maxWidth: '30rem',
-        bgcolor: '#EDF4ED',
+        bgcolor: 'secondary.light',
         border: '1px dashed grey',
         borderRadius: 2,
         p: 2,
@@ -96,7 +96,7 @@ const ChangeUserData = (props: ChangeUserDataProps) => {
             disabled={!passwordFieldValue}
             title={'Opprett'}
             size="large"
-            sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: '#55868C' } }}
+            sx={{ bgcolor: 'warning.main', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: 'primary.main' } }}
           >
             <SentIcon />
           </IconButton>

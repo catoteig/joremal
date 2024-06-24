@@ -35,7 +35,7 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
         <Box
           component={'form'}
           sx={{ border: '1px dashed grey', borderRadius: 2 }}
-          bgcolor={'#EDF4ED'}
+          bgcolor={'secondary.light'}
           padding={'1rem'}
         >
           <Typography>
@@ -76,7 +76,7 @@ const LoginSignupForm = (props: LoginSignupFormProps) => {
               onClick={onSubmit}
               title={buttonName}
               size="large"
-              sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: '#55868C' } }}
+              sx={{ bgcolor: 'warning', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: 'main' } }}
             >
               <SentIcon />
             </IconButton>

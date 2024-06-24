@@ -42,7 +42,7 @@ const ParticleElement = () => {
         //   width: 1,
         // },
         move: {
-          direction: MoveDirection.none,
+          direction: MoveDirection.bottom,
           enable: true,
           outModes: {
             default: OutMode.out,

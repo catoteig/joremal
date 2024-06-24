@@ -72,7 +72,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
         transform: 'translate(-50%, -50%)',
         width: 'calc(100% - 4rem)',
         maxWidth: '30rem',
-        bgcolor: '#EDF4ED',
+        bgcolor: 'secondary.light',
         border: '1px dashed grey',
         borderRadius: 2,
         p: 2,
@@ -126,7 +126,12 @@ const TodoSubmit = (props: TodoSubmitProps) => {
                   disabled={!tagInput.trim()}
                   title={'Opprett'}
                   size="medium"
-                  sx={{ whiteSpace: 'nowrap', bgcolor: '#ef767a', color: 'white', '&:hover': { bgcolor: '#55868C' } }}
+                  sx={{
+                    bgcolor: 'warning.main',
+                    marginTop: '1rem',
+                    color: 'white',
+                    '&:hover': { bgcolor: 'primary.main' },
+                  }}
                 >
                   <PlusSignIcon />
                 </IconButton>
@@ -163,7 +168,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
             disabled={!inputFieldValue}
             title={'Opprett'}
             size="large"
-            sx={{ bgcolor: '#ef767a', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: '#55868C' } }}
+            sx={{ bgcolor: 'warning.main', marginTop: '1rem', color: 'white', '&:hover': { bgcolor: 'primary.main' } }}
           >
             <SentIcon />
           </IconButton>

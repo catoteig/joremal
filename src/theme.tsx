@@ -1,38 +1,49 @@
-import { createTheme } from '@mui/material/styles'
+import { createTheme, ThemeOptions } from '@mui/material/styles'
 import { Theme } from '@emotion/react'
 
-const theme: Theme = () =>
-  createTheme({
-    palette: {
-      primary: {
-        light: '#f4ecd6',
-        main: '#55868C',
-        dark: '#023C40',
-        contrastText: '#78FFD6',
-      },
-      secondary: {
-        light: '#ff7961',
-        main: '#f44336',
-        dark: '#ba000d',
-        contrastText: '#000',
-      },
-      warning: {
-        main: '#ef767a',
-      },
+export const themeOpts: ThemeOptions = {
+  palette: {
+    primary: {
+      light: '#f4ecd6',
+      main: '#55868C',
+      dark: '#023C40',
+      contrastText: '#78FFD6',
     },
-    components: {
-      MuiMenu: {
-        styleOverrides: {
-          list: {
-            '&[role="menu"]': {
-              backgroundColor: '#e3eae2',
-            },
+    secondary: {
+      light: '#edf4ed',
+      main: '#f44336',
+      dark: '#08A045',
+      contrastText: '#000',
+    },
+    warning: {
+      main: '#ef767a',
+    },
+  },
+  components: {
+    MuiMenu: {
+      styleOverrides: {
+        list: {
+          '&[role="menu"]': {
+            backgroundColor: '#e3eae2',
           },
         },
       },
     },
-    spacing: 8,
-    typography: { button: { textTransform: 'none' } },
-  })
+    MuiIconButton: {
+      styleOverrides: {
+        sizeLarge: {
+          bgcolor: 'warning.main',
+          marginTop: '1rem',
+          color: 'white',
+          '&:hover': { bgcolor: 'primary.main' },
+        },
+      },
+    },
+  },
+  spacing: 8,
+  typography: { button: { textTransform: 'none' } },
+}
+
+const theme: Theme = () => createTheme(themeOpts)
 
 export default theme
