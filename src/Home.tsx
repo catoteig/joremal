@@ -1,7 +1,7 @@
 import './Home.css'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { fbCreate, fbDelete, fbGetAll, fbUpdate } from './services/joremal.tsx'
+import { fbCreate, fbDelete, fbGetAll, fbGetFolders, fbUpdate } from './services/joremal.tsx'
 import { capitalize } from './helpers/helpers.tsx'
 import { v4 } from 'uuid'
 import { fakerNB_NO } from '@faker-js/faker'
@@ -14,8 +14,10 @@ import { Award04Icon, NoteAddIcon, WorkoutKickingIcon } from 'hugeicons-react'
 import { useAuth } from './AuthContext.ts'
 import { Navigate } from 'react-router-dom'
 import ChangeUserData from './components/changeUserData.tsx'
-import ParticleElement from './components/particleElement.tsx'
 import firestore = firebase.firestore
+
+const LOCAL_STORAGE_FOLDER = 'joremal.folder'
+const LOCAL_STORAGE_FOLDERLIST = 'joremal.folderlist'
 
 export type TodoItem = {
   id: string
@@ -25,6 +27,7 @@ export type TodoItem = {
   list: string[]
   created: firestore.Timestamp
   updated: null | firestore.Timestamp
+  folder: string
 }
 export type TodoFilter = 'complete' | 'incomplete' | null
 
@@ -41,6 +44,43 @@ const Home = () => {
   const todoNameRef = useRef<HTMLInputElement>(null)
   const { user } = useAuth()
   const [userDataVisible, setUserDataVisible] = useState<boolean>(false)
+  const [folderList, setFolderList] = useState<string[]>([])
+
+  const [currentFolder, setCurrentFolder] = useState<string>('')
+
+  const handleFolderChange = (folder: string) => {
+    setCurrentFolder(folder) // TODO
+  }
+
+  useEffect(() => {
+    const folder = localStorage.getItem(LOCAL_STORAGE_FOLDER) as string
+    if (folder) {
+      setCurrentFolder(folder)
+    }
+    handleFolderList()
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_FOLDER, currentFolder)
+    handleFetch()
+  }, [currentFolder])
+
+  const handleFolderList = () => {
+    const folderlist: string[] = JSON.parse(localStorage.getItem(LOCAL_STORAGE_FOLDERLIST) as string)
+    if (folderlist) {
+      setFolderList(folderlist)
+    } else {
+      fbGetFolders().then((res) => {
+        setFolderList(res)
+        setCurrentFolder(res[0])
+      })
+    }
+    setCurrentFolder(folderList[0])
+  }
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_FOLDERLIST, JSON.stringify(folderList))
+  }, [folderList])
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth)
@@ -55,12 +95,14 @@ const Home = () => {
   // const isMobile = width <= 768
 
   useEffect(() => {
-    handleFetch()
-  }, [])
-
-  useEffect(() => {
     handleTodoFilterAndSort()
   }, [todoFilter, todos, orderAsc, tagFilter])
+
+  useEffect(() => {
+    if (todosWithFilterAndSort.length === 0) {
+      setCurrentFolder(folderList[0])
+    }
+  }, [todosWithFilterAndSort])
 
   const handleAddModalVisible = () => {
     setAddModalVisible(!addModalVisible)
@@ -70,6 +112,10 @@ const Home = () => {
   }
   const handleAddTodo = (newTodo: TodoItem) => {
     fbCreate(newTodo).then(() => handleFetch())
+
+    if (!folderList.includes(newTodo.folder)) {
+      setFolderList([...folderList, newTodo.folder])
+    }
 
     if (todoNameRef.current) {
       todoNameRef.current.value = ''
@@ -91,7 +137,7 @@ const Home = () => {
   }
 
   const handleFetch = () => {
-    fbGetAll()
+    fbGetAll(currentFolder)
       .then((res) => setTodos([...res]))
       .then(() => handleTodoFilterAndSort())
     setLoading(false)
@@ -149,6 +195,7 @@ const Home = () => {
       notes: fakerNB_NO.word.words(15),
       created: new Date(),
       list: Array.from({ length: fakerNB_NO.number.int({ min: 0, max: 5 }) }).map(() => fakerNB_NO.person.firstName()),
+      folder: currentFolder,
     }))
     fbCreate(todoItems).then(() => handleFetch())
   }
@@ -236,7 +283,6 @@ const Home = () => {
             hasTodos={hasTodos}
             orderAsc={orderAsc}
             setOrderAsc={setOrderAsc}
-            fetchData={handleFetch}
             loading={loading}
             addVisible={addModalVisible}
             setAddVisible={handleAddModalVisible}
@@ -244,6 +290,9 @@ const Home = () => {
             setTagFilter={setTagFilter}
             userDataVisible={userDataVisible}
             setUserDataVisible={handleUserDataModalVisible}
+            currentFolder={currentFolder}
+            setCurrentFolder={handleFolderChange}
+            folderList={folderList}
           />
         </Grid>
       </Grid>
@@ -260,12 +309,14 @@ const Home = () => {
           todoNameRef={todoNameRef}
           handleAddTodo={handleAddTodo}
           handleAddModalVisible={handleAddModalVisible}
+          currentFolder={currentFolder}
+          allFolders={folderList}
         />
       </Modal>
       <Modal open={userDataVisible} onClose={handleUserDataModalVisible}>
         <ChangeUserData setVisible={setUserDataVisible} />
       </Modal>
-      <ParticleElement />
+      {/*<ParticleElement />*/}
     </>
   )
 }

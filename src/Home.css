@@ -14,8 +14,12 @@ h1 {
   -webkit-text-fill-color: rgba(255, 255, 255, 0);
 }
 
+& .MuiOutlinedInput-root {
+  background-color: #f0f0f1;
+}
+
 canvas {
-  z-index: -1;
+  /*z-index: -1;*/
 }
 
 .logo {
@@ -41,9 +45,9 @@ canvas {
 }
 
 .expansion-panel {
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {

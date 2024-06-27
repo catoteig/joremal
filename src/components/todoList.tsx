@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import {
   Accordion,
   AccordionDetails,
@@ -26,10 +26,13 @@ import {
   CheckmarkSquare04Icon,
   Delete04Icon,
   FilterRemoveIcon,
+  Folder01Icon,
+  LibraryIcon,
   Logout03Icon,
   Menu01Icon,
   NoteAddIcon,
   PasswordValidationIcon,
+  PlusSignIcon,
   RowDeleteIcon,
   SquareIcon,
   Tag01Icon,
@@ -38,6 +41,7 @@ import {
 import { AuthContext } from '../AuthContext.ts'
 import Typography from '@mui/material/Typography'
 import { themeOpts } from '../theme.tsx'
+import Button from '@mui/material/Button'
 
 export interface TodoListProps {
   todos: TodoItem[]
@@ -51,14 +55,16 @@ export interface TodoListProps {
   hasTodos: boolean
   orderAsc: boolean
   setOrderAsc: (orderBy: boolean) => void
-  fetchData: () => void
   loading: boolean
-  setAddVisible: () => void
+  setAddVisible: (newFolder: boolean) => void
   addVisible: boolean
   setTagFilter: (tags: string[]) => void
   tagFilter: string[]
   userDataVisible: boolean
   setUserDataVisible: () => void
+  currentFolder: string
+  setCurrentFolder: (folder: string) => void
+  folderList: string[]
 }
 
 const TodoList = (props: TodoListProps) => {
@@ -80,6 +86,9 @@ const TodoList = (props: TodoListProps) => {
     setTagFilter,
     tagFilter,
     setUserDataVisible,
+    currentFolder,
+    setCurrentFolder,
+    folderList,
   } = props
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
@@ -136,10 +145,11 @@ const TodoList = (props: TodoListProps) => {
     setMoreMenuAnchorEl(null)
   }
 
-  const handleToggle = (id: string) => {
+  const handleToggle = async (id: string) => {
     setRemoveLoading(true)
     toggleTodo(id)
     setRemoveLoading(false)
+    await handleRefresh()
   }
 
   const [moreMenuAnchorEl, setMoreMenuAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -175,12 +185,27 @@ const TodoList = (props: TodoListProps) => {
     }
   }
 
-  const handleChangePasswordClick =()=>{
+  const removeTagFilter = () => setTagFilter([])
+
+  const handleChangePasswordClick = () => {
     setUserDataVisible()
     handleMoreMenuClose()
   }
 
-  const removeTagFilter = () => setTagFilter([])
+  const [folderMenuAnchorEl, setFolderMenuAnchorEl] = React.useState<null | HTMLElement>(null)
+  const folderMenuOpen = Boolean(folderMenuAnchorEl)
+  const handleFolderMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setFolderMenuAnchorEl(event.currentTarget)
+  }
+  const handleFolderMenuClose = () => {
+    setFolderMenuAnchorEl(null)
+  }
+
+  // @ts-expect-error This color does exist in theme
+  const iconFocusColor = themeOpts.palette.warning.main
+
+  const [refresh, doRefresh] = useState(false)
+  const handleRefresh = async () => doRefresh(!refresh)
 
   return (
     hasTodos && (
@@ -209,7 +234,40 @@ const TodoList = (props: TodoListProps) => {
               height={'3.3rem'}
             >
               <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
-                <IconButton color={addVisible ? 'warning' : 'default'} onClick={setAddVisible} title={'Opprett'}>
+                {/*<ConfettiElement refresh={refresh} />*/}
+                <Button
+                  onClick={handleFolderMenuClick}
+                  title={'Tags'}
+                  disabled={folderList.length === 0}
+                  sx={{ color: 'rgba(0, 0, 0, 0.54)', borderRadius: '30px' }}
+                >
+                  <LibraryIcon />
+                  <Typography marginLeft={'0.5rem'}>{currentFolder}</Typography>
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={folderMenuAnchorEl}
+                  open={folderMenuOpen}
+                  onClose={handleFolderMenuClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  {folderList.map((folder) => (
+                    <MenuItem key={folder} onClick={() => setCurrentFolder(folder)} title={`${folder}`}>
+                      <Folder01Icon color={currentFolder === folder ? iconFocusColor : undefined} />
+                      <p style={{ margin: '0rem 1rem' }}>{currentFolder === folder ? <b>{folder}</b> : folder}</p>
+                    </MenuItem>
+                  ))}{' '}
+                  <Divider />
+                  <MenuItem key={'addFolder'} onClick={() => {setAddVisible(true)}} title={`Ny mappe`}>
+                    <PlusSignIcon />
+                    <p style={{ margin: '0rem 1rem' }}>Ny mappe</p>
+                  </MenuItem>
+                </Menu>
+                <IconButton color={addVisible ? 'warning' : 'default'} onClick={()=>setAddVisible(false)} title={'Opprett'}>
                   <NoteAddIcon />
                 </IconButton>
                 {/*<IconButton onClick={handleOrderBy} title={'Sorter'}>*/}
@@ -252,7 +310,7 @@ const TodoList = (props: TodoListProps) => {
                   )}
                   {tags.map((tag) => (
                     <MenuItem key={tag} onClick={() => handleTagFilter(tag)} title={`Tag ${tag}`}>
-                      <Tag01Icon color={tagFilter.includes(tag) ? 'warning' : undefined} />
+                      <Tag01Icon color={tagFilter.includes(tag) ? iconFocusColor : undefined} />
                       <p style={{ margin: '0rem 1rem' }}>{tagFilter.includes(tag) ? <b>{tag}</b> : tag}</p>
                     </MenuItem>
                   ))}
@@ -393,7 +451,7 @@ const TodoList = (props: TodoListProps) => {
                               </Grid>
                             )}
                             {(todo.notes || todo.list.length > 0) && (
-                              <Divider  sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
+                              <Divider sx={{ marginBottom: 1, marginTop: 1 }}></Divider>
                             )}
                             <Typography
                               component={'p'}

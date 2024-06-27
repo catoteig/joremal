@@ -1,17 +1,30 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, query, setDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import { getDb } from './db.tsx'
 import { TodoItem } from '../Home.tsx'
 
-export const collectionName = 'joremal'
+const collectionName = 'joremal'
 
-export const fbGetAll = async (): Promise<TodoItem[]> => {
-  const q = query(collection(getDb(), collectionName))
+export const fbGetFolders = async (): Promise<string[]> => {
+  const collectionRef = collection(getDb(), collectionName)
+  const docRefs = await getDocs(collectionRef)
+
+  const uniqueFolders = new Set<string>()
+  docRefs.forEach((todo) => {
+    const { folder } = todo.data() as TodoItem
+    uniqueFolders.add(folder)
+  })
+  console.log([uniqueFolders])
+  return [...uniqueFolders].sort((a, b) => a.localeCompare(b))
+}
+
+export const fbGetAll = async (folder: string): Promise<TodoItem[]> => {
+  const q = query(collection(getDb(), collectionName), where('folder', '==', folder))
   const doc_refs = await getDocs(q)
 
   const res: TodoItem[] = []
 
   doc_refs.forEach((todo) => {
-    const { name, complete, notes, created, updated, list } = todo.data() as TodoItem
+    const { name, complete, notes, created, updated, list, folder } = todo.data() as TodoItem
     res.push({
       id: todo.id,
       name: name,
@@ -20,6 +33,7 @@ export const fbGetAll = async (): Promise<TodoItem[]> => {
       created: created,
       updated: updated,
       list: list,
+      folder: folder,
     })
   })
   return res
@@ -70,16 +84,16 @@ export const fbGetAll = async (): Promise<TodoItem[]> => {
   // ]
 }
 
-export const fbCreate = async (args: TodoItem | TodoItem[]) => {
-  const items: TodoItem[] = Array.isArray(args) ? args : [args]
+export const fbCreate = async (data: TodoItem | TodoItem[]) => {
+  const items: TodoItem[] = Array.isArray(data) ? data : [data]
   for (const item of items) {
     item.list = [...new Set(item.list)] // Remove duplicates
     await addDoc(collection(getDb(), collectionName), item)
   }
 }
 
-export const fbUpdate = async (args: TodoItem | TodoItem[]) => {
-  const items: TodoItem[] = Array.isArray(args) ? args : [args]
+export const fbUpdate = async (data: TodoItem | TodoItem[]) => {
+  const items: TodoItem[] = Array.isArray(data) ? data : [data]
   for (const item of items) {
     // @ts-expect-error 'Updated' datatype
     item.updated = new Date()
@@ -87,8 +101,8 @@ export const fbUpdate = async (args: TodoItem | TodoItem[]) => {
   }
 }
 
-export const fbDelete = async (args: TodoItem | TodoItem[]) => {
-  const items: TodoItem[] = Array.isArray(args) ? args : [args]
+export const fbDelete = async (data: TodoItem | TodoItem[]) => {
+  const items: TodoItem[] = Array.isArray(data) ? data : [data]
   for (const item of items) {
     await deleteDoc(doc(getDb(), collectionName, item.id))
   }

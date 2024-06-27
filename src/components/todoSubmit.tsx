@@ -1,5 +1,17 @@
 import { RefObject, SetStateAction, useRef, useState } from 'react'
-import { Box, capitalize, Card, CardContent, Chip, IconButton, InputAdornment, Stack, TextField } from '@mui/material'
+import {
+  Alert,
+  Autocomplete,
+  Box,
+  capitalize,
+  Card,
+  CardContent,
+  Chip,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+} from '@mui/material'
 import { CancelCircleIcon, PlusSignIcon, SentIcon, Tag01Icon } from 'hugeicons-react'
 import Grid from '@mui/material/Unstable_Grid2'
 import { TodoItem } from '../Home.tsx'
@@ -8,16 +20,19 @@ import { v4 } from 'uuid'
 export interface TodoSubmitProps {
   todoNameRef: RefObject<HTMLInputElement>
   handleAddTodo: (newTodo: TodoItem) => void
-  handleAddModalVisible: () => void
+  handleAddModalVisible: (newFolder?: boolean) => void
+  currentFolder: string
+  allFolders: string[]
 }
 
 const TodoSubmit = (props: TodoSubmitProps) => {
-  const { todoNameRef, handleAddTodo, handleAddModalVisible } = props
+  const { todoNameRef, handleAddTodo, handleAddModalVisible, currentFolder, allFolders } = props
   const [tagInput, setTagInput] = useState<string>('')
-  const tagNameRef = useRef<HTMLInputElement>(null)
   const [inputFieldValue, setInputFieldValue] = useState<string>('')
   const [noteFieldValue, setNoteFieldValue] = useState<string>('')
   const [tagInputListValue, setTagInputListValue] = useState<string[]>([])
+  const [folderInputValue, setFolderInputValue] = useState<string>(currentFolder)
+  const tagNameRef = useRef<HTMLInputElement>(null)
 
   const onFormSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault()
@@ -30,6 +45,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
       // @ts-expect-error Created datatype
       created: new Date(),
       list: tagInputListValue,
+      folder: folderInputValue,
     }
     handleAddTodo(newTodo)
     setInputFieldValue('')
@@ -44,6 +60,10 @@ const TodoSubmit = (props: TodoSubmitProps) => {
   const handleNoteFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
     setNoteFieldValue(event.target.value)
   }
+  const handleFolderInputValue = (event: { target: { value: SetStateAction<string> } }) => {
+    setFolderInputValue(event.target.value)
+  }
+
   const handleTagInputListValue = (val: string[]) => {
     setTagInputListValue(val)
   }
@@ -62,6 +82,8 @@ const TodoSubmit = (props: TodoSubmitProps) => {
     const newTagList = tagInputListValue.filter((tagItem) => tagItem !== tag)
     handleTagInputListValue(newTagList)
   }
+
+  const createsNewFolder = !allFolders.includes(folderInputValue)
 
   return (
     <Box
@@ -99,6 +121,9 @@ const TodoSubmit = (props: TodoSubmitProps) => {
             value={noteFieldValue}
             onChange={handleNoteFieldChange}
             fullWidth
+            multiline
+            minRows={2}
+            maxRows={6}
           />
           <Card variant={'outlined'} style={{ backgroundColor: 'transparent' }}>
             <CardContent>
@@ -161,6 +186,30 @@ const TodoSubmit = (props: TodoSubmitProps) => {
               </Grid>
             </CardContent>
           </Card>
+          <Autocomplete
+            freeSolo
+            options={allFolders}
+            defaultValue={currentFolder}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                inputProps={{ ...params.inputProps, maxLength: 20 }}
+                label={'Mappe'}
+                variant="outlined"
+                id="todoFolder"
+                type="text"
+                value={folderInputValue}
+                onChange={handleFolderInputValue}
+                fullWidth
+                color={createsNewFolder ? 'info' : undefined}
+              />
+            )}
+          />
+          {createsNewFolder && (
+            <Alert severity={'info'} variant={'filled'}>
+              Ny mappe vil bli opprettet
+            </Alert>
+          )}
         </Stack>
         <Box flexDirection={'column'} textAlign={'right'}>
           <IconButton

@@ -12,12 +12,15 @@ export const themeOpts: ThemeOptions = {
     secondary: {
       light: '#edf4ed',
       main: '#f44336',
-      dark: '#08A045',
+      dark: '#698F3F',
       contrastText: '#000',
     },
     warning: {
       main: '#ef767a',
     },
+    success:{
+      main: '#698F3F',
+    }
   },
   components: {
     MuiMenu: {
@@ -31,7 +34,7 @@ export const themeOpts: ThemeOptions = {
     },
     MuiIconButton: {
       styleOverrides: {
-        sizeLarge: {
+        colorPrimary: {
           bgcolor: 'warning.main',
           marginTop: '1rem',
           color: 'white',
