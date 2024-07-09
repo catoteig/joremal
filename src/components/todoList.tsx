@@ -374,7 +374,10 @@ const TodoList = (props: TodoListProps) => {
             <Grid xs={12} sx={{ padding: 0 }} height={'calc(100% - 3.3rem)'} overflow={'auto'}>
               {todos.map((todo) => {
                 const labelId = `checkbox-list-label-${todo.id}`
-                const handleTodoClick = () => handleToggle(todo.id)
+                const handleTodoClick = (e: { stopPropagation: () => void }) => {
+                  e.stopPropagation()
+                  handleToggle(todo.id)
+                }
                 const created = new Date(todo.created.seconds * 1000).toLocaleDateString()
                 const updated: string | null = todo.updated
                   ? new Date(todo.updated.seconds * 1000).toLocaleDateString()
