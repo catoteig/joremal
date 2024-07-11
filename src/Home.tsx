@@ -1,6 +1,6 @@
 import './Home.css'
 import * as React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { fbCreate, fbDelete, fbGetAll, fbGetFolders, fbUpdate } from './services/joremal.tsx'
 import { capitalize } from './helpers/helpers.tsx'
 import { v4 } from 'uuid'
@@ -16,8 +16,7 @@ import { Navigate } from 'react-router-dom'
 import ChangeUserData from './components/changeUserData.tsx'
 import firestore = firebase.firestore
 
-const LOCAL_STORAGE_FOLDER = 'joremal.folder'
-const LOCAL_STORAGE_FOLDERLIST = 'joremal.folderlist'
+const LOCAL_STORAGE_CURRENT_FOLDER = 'joremal.currentFolder'
 
 export type TodoItem = {
   id: string
@@ -32,6 +31,8 @@ export type TodoItem = {
 export type TodoFilter = 'complete' | 'incomplete' | null
 
 const Home = () => {
+  const { user } = useAuth()
+
   const [todos, setTodos] = useState<TodoItem[]>([])
   const [todosWithFilterAndSort, setTodosWithFilterAndSort] = useState<TodoItem[]>([])
   const [todoFilter, setTodoFilter] = React.useState<TodoFilter>(null)
@@ -39,21 +40,17 @@ const Home = () => {
   const [orderAsc, setOrderAsc] = React.useState<boolean>(true)
 
   const [loading, setLoading] = useState<boolean>(false)
-  const [, setWidth] = useState<number>(window.innerWidth)
   const [addModalVisible, setAddModalVisible] = React.useState<boolean>(false)
   const todoNameRef = useRef<HTMLInputElement>(null)
-  const { user } = useAuth()
   const [userDataVisible, setUserDataVisible] = useState<boolean>(false)
-  const [folderList, setFolderList] = useState<string[]>([])
 
+  const [folderList, setFolderList] = useState<string[]>([])
   const [currentFolder, setCurrentFolder] = useState<string>('')
 
-  const handleFolderChange = (folder: string) => {
-    setCurrentFolder(folder) // TODO
-  }
+  const allTags = useMemo(() => todos.flatMap((todo) => todo.list), [todos])
 
   useEffect(() => {
-    const folder = localStorage.getItem(LOCAL_STORAGE_FOLDER) as string
+    const folder = localStorage.getItem(LOCAL_STORAGE_CURRENT_FOLDER) as string
     if (folder) {
       setCurrentFolder(folder)
     }
@@ -61,38 +58,9 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_FOLDER, currentFolder)
+    localStorage.setItem(LOCAL_STORAGE_CURRENT_FOLDER, currentFolder)
     handleFetch()
   }, [currentFolder])
-
-  const handleFolderList = () => {
-    const folderlist: string[] = JSON.parse(localStorage.getItem(LOCAL_STORAGE_FOLDERLIST) as string)
-    if (folderlist) {
-      setFolderList(folderlist)
-    } else {
-      fbGetFolders().then((res) => {
-        setFolderList(res)
-        setCurrentFolder(res[0])
-      })
-    }
-    setCurrentFolder(folderList[0])
-  }
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_FOLDERLIST, JSON.stringify(folderList))
-  }, [folderList])
-
-  function handleWindowSizeChange() {
-    setWidth(window.innerWidth)
-  }
-  useEffect(() => {
-    window.addEventListener('resize', handleWindowSizeChange)
-    return () => {
-      window.removeEventListener('resize', handleWindowSizeChange)
-    }
-  }, [])
-
-  // const isMobile = width <= 768
 
   useEffect(() => {
     handleTodoFilterAndSort()
@@ -104,32 +72,38 @@ const Home = () => {
     }
   }, [todosWithFilterAndSort])
 
+  const handleFolderChange = (folder: string) => {
+    setCurrentFolder(folder) // TODO
+  }
+
+  const handleFolderList = () => {
+    fbGetFolders().then((res) => setFolderList(res))
+    setCurrentFolder(folderList[0])
+  }
+
   const handleAddModalVisible = () => {
     setAddModalVisible(!addModalVisible)
   }
+
   const handleUserDataModalVisible = () => {
     setUserDataVisible(!userDataVisible)
   }
+
   const handleAddTodo = (newTodo: TodoItem) => {
     fbCreate(newTodo).then(() => handleFetch())
 
-    if (!folderList.includes(newTodo.folder)) {
-      setFolderList([...folderList, newTodo.folder])
-    }
+    if (!folderList.includes(newTodo.folder)) setFolderList([...folderList, newTodo.folder])
 
-    if (todoNameRef.current) {
-      todoNameRef.current.value = ''
-    }
+    if (todoNameRef.current) todoNameRef.current.value = ''
   }
+
   const handleTodoFilterAndSort = () => {
-    let filtered: TodoItem[] = []
-    if (todoFilter === 'complete') {
-      filtered = todos.filter((t) => t.complete)
-    } else if (todoFilter === 'incomplete') {
-      filtered = todos.filter((t) => !t.complete)
-    } else if (todoFilter === null) {
-      filtered = todos
-    }
+    let filtered: TodoItem[] =
+      todoFilter === 'complete'
+        ? todos.filter((t) => t.complete)
+        : todoFilter === 'incomplete'
+        ? todos.filter((t) => !t.complete)
+        : todos
 
     if (tagFilter.length > 0) filtered = filtered.filter((todo) => tagFilter.some((tag) => todo.list.includes(tag)))
     filtered = filtered.sort((a, b) => (orderAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
@@ -137,23 +111,15 @@ const Home = () => {
   }
 
   const handleFetch = () => {
-    fbGetAll(currentFolder)
-      .then((res) => setTodos([...res]))
-      .then(() => handleTodoFilterAndSort())
+    fbGetAll(currentFolder).then((res) => {
+      setTodos([...res])
+      if (res.length === 0) handleFolderList()
+    })
     setLoading(false)
   }
 
-  const handleRemove = async (todo: TodoItem | TodoItem[]) => {
-    if (Array.isArray(todo)) setLoading(true)
-    clearTodoFilter()
-    clearTagFilter()
-    await fbDelete(todo)
-      .then(() => setLoading(false))
-      .then(() => handleFetch())
-  }
-
-  const handleUpdateTodo = async (todo: TodoItem | TodoItem[]) => {
-    await fbUpdate(todo).then(() => handleFetch())
+  const handleUpdateTodo = (todo: TodoItem | TodoItem[]) => {
+    fbUpdate(todo).then(() => handleFetch())
   }
 
   const handleToggleTodo = (id: string) => {
@@ -161,7 +127,7 @@ const Home = () => {
     const todo = newTodos.find((todo) => todo.id === id)
     if (todo) {
       todo.complete = !todo.complete
-      handleUpdateTodo(todo).then(() => handleFetch())
+      handleUpdateTodo(todo)
     }
   }
 
@@ -171,18 +137,24 @@ const Home = () => {
       ...todo,
       complete: allTodos.some((e) => !e.complete),
     }))
-    handleUpdateTodo(newTodos).then(() => handleFetch())
+    handleUpdateTodo(newTodos)
   }
 
-  const handleRemoveCompletedTodo = () => {
+  const handleRemove = (todo: TodoItem | TodoItem[]): void => {
+    if (Array.isArray(todo)) setLoading(true)
+    fbDelete(todo).then(() => handleFetch())
+    setLoading(false)
+  }
+
+  const handleRemoveCompletedTodos = () => {
     setLoading(true)
     const completedTodos = todos.filter((todo) => todo.complete)
-    handleRemove(completedTodos).then(() => handleFetch())
+    handleRemove(completedTodos)
   }
 
   const handleRemoveTodo = (id: string) => {
     const todo = todos.find((todo) => todo.id === id)!
-    handleRemove(todo).then(() => handleFetch())
+    handleRemove(todo)
   }
 
   const autoFill = () => {
@@ -213,7 +185,6 @@ const Home = () => {
   const setFilterComplete = () => setTodoFilter('complete')
   const setFilterIncomplete = () => setTodoFilter('incomplete')
   const clearTodoFilter = () => setTodoFilter(null)
-  const clearTagFilter = () => setTagFilter([])
 
   return !user ? (
     <Navigate to="/login" />
@@ -276,7 +247,7 @@ const Home = () => {
             toggleTodo={handleToggleTodo}
             removeTodo={handleRemoveTodo}
             toggleAllTodos={handleToggleAllTodos}
-            removeAllTodo={handleRemoveCompletedTodo}
+            removeAllTodo={handleRemoveCompletedTodos}
             autoFill={autoFill}
             hasIncompleteTodos={hasIncompleteTodos}
             completeTodos={completeTodos}
@@ -311,6 +282,7 @@ const Home = () => {
           handleAddModalVisible={handleAddModalVisible}
           currentFolder={currentFolder}
           allFolders={folderList}
+          allTags={allTags}
         />
       </Modal>
       <Modal open={userDataVisible} onClose={handleUserDataModalVisible}>

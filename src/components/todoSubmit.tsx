@@ -23,6 +23,7 @@ export interface TodoSubmitProps {
   handleAddModalVisible: (newFolder?: boolean) => void
   currentFolder: string
   allFolders: string[]
+  allTags: string[]
 }
 
 const TodoSubmit = (props: TodoSubmitProps) => {
@@ -31,7 +32,8 @@ const TodoSubmit = (props: TodoSubmitProps) => {
   const [inputFieldValue, setInputFieldValue] = useState<string>('')
   const [noteFieldValue, setNoteFieldValue] = useState<string>('')
   const [tagInputListValue, setTagInputListValue] = useState<string[]>([])
-  const [folderInputValue, setFolderInputValue] = useState<string>(currentFolder)
+  const [folderValue, setFolderValue] = useState<string | null>(currentFolder)
+  const [folderInputValue, setFolderInputValue] = useState('')
   const tagNameRef = useRef<HTMLInputElement>(null)
 
   const onFormSubmit = (e: { preventDefault: () => void }) => {
@@ -59,9 +61,6 @@ const TodoSubmit = (props: TodoSubmitProps) => {
   }
   const handleNoteFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
     setNoteFieldValue(event.target.value)
-  }
-  const handleFolderInputValue = (event: { target: { value: SetStateAction<string> } }) => {
-    setFolderInputValue(event.target.value)
   }
 
   const handleTagInputListValue = (val: string[]) => {
@@ -172,7 +171,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
                   },
                 }}
               >
-                {tagInputListValue.map((tag) => (
+                {tagInputListValue.map((tag, idx) => (
                   <Grid>
                     <Chip
                       deleteIcon={<CancelCircleIcon />}
@@ -180,6 +179,7 @@ const TodoSubmit = (props: TodoSubmitProps) => {
                       label={tag}
                       color={'warning'}
                       variant={'outlined'}
+                      key={`tag-${idx}`}
                     />
                   </Grid>
                 ))}
@@ -190,6 +190,14 @@ const TodoSubmit = (props: TodoSubmitProps) => {
             freeSolo
             options={allFolders}
             defaultValue={currentFolder}
+            value={folderValue}
+            onChange={(_event, newValue: string | null) => {
+              setFolderValue(newValue)
+            }}
+            inputValue={folderInputValue}
+            onInputChange={(_event, newInputValue) => {
+              setFolderInputValue(newInputValue)
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -198,8 +206,6 @@ const TodoSubmit = (props: TodoSubmitProps) => {
                 variant="outlined"
                 id="todoFolder"
                 type="text"
-                value={folderInputValue}
-                onChange={handleFolderInputValue}
                 fullWidth
                 color={createsNewFolder ? 'info' : undefined}
               />

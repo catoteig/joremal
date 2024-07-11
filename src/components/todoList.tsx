@@ -32,7 +32,7 @@ import {
   Menu01Icon,
   NoteAddIcon,
   PasswordValidationIcon,
-  PlusSignIcon,
+  PoopIcon,
   RowDeleteIcon,
   SquareIcon,
   Tag01Icon,
@@ -78,8 +78,6 @@ const TodoList = (props: TodoListProps) => {
     completeTodos,
     removeAllTodo,
     autoFill,
-    // orderAsc,
-    // setOrderAsc,
     loading,
     setAddVisible,
     addVisible,
@@ -159,7 +157,6 @@ const TodoList = (props: TodoListProps) => {
   }
   const handleMoreMenuClose = () => {
     setMoreMenuAnchorEl(null)
-    console.log(moreMenuAnchorEl)
   }
 
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -199,6 +196,11 @@ const TodoList = (props: TodoListProps) => {
   }
   const handleFolderMenuClose = () => {
     setFolderMenuAnchorEl(null)
+  }
+
+  const selectFolder = (folder: string) => {
+    setCurrentFolder(folder)
+    handleFolderMenuClose()
   }
 
   // @ts-expect-error This color does exist in theme
@@ -241,7 +243,7 @@ const TodoList = (props: TodoListProps) => {
                   disabled={folderList.length === 0}
                   sx={{ color: 'rgba(0, 0, 0, 0.54)', borderRadius: '30px' }}
                 >
-                  <LibraryIcon />
+                  <LibraryIcon color={folderMenuOpen ? 'warning' : 'rgba(0, 0, 0, 0.54)'} />
                   <Typography marginLeft={'0.5rem'}>{currentFolder}</Typography>
                 </Button>
                 <Menu
@@ -256,18 +258,17 @@ const TodoList = (props: TodoListProps) => {
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                   {folderList.map((folder) => (
-                    <MenuItem key={folder} onClick={() => setCurrentFolder(folder)} title={`${folder}`}>
+                    <MenuItem key={folder} onClick={() => selectFolder(folder)} title={`${folder}`}>
                       <Folder01Icon color={currentFolder === folder ? iconFocusColor : undefined} />
                       <p style={{ margin: '0rem 1rem' }}>{currentFolder === folder ? <b>{folder}</b> : folder}</p>
                     </MenuItem>
-                  ))}{' '}
-                  <Divider />
-                  <MenuItem key={'addFolder'} onClick={() => {setAddVisible(true)}} title={`Ny mappe`}>
-                    <PlusSignIcon />
-                    <p style={{ margin: '0rem 1rem' }}>Ny mappe</p>
-                  </MenuItem>
+                  ))}
                 </Menu>
-                <IconButton color={addVisible ? 'warning' : 'default'} onClick={()=>setAddVisible(false)} title={'Opprett'}>
+                <IconButton
+                  color={addVisible ? 'warning' : 'default'}
+                  onClick={() => setAddVisible(false)}
+                  title={'Opprett'}
+                >
                   <NoteAddIcon />
                 </IconButton>
                 {/*<IconButton onClick={handleOrderBy} title={'Sorter'}>*/}
@@ -441,10 +442,10 @@ const TodoList = (props: TodoListProps) => {
                                 alignItems={'center'}
                                 padding={0}
                               >
-                                {todo.list.map((tagName) => (
-                                  <Grid>
+                                {todo.list.map((tagName, index) => (
+                                  <Grid key={`${todo.id}-${index}`}>
                                     <Chip
-                                      // icon={tagName === 'Marit' ? <PoopIcon color={'#953636'} /> : undefined}
+                                      icon={tagName === 'Marit' ? <PoopIcon color={'#953636'} /> : undefined}
                                       label={tagName}
                                       color={'warning'}
                                       variant={'outlined'}
