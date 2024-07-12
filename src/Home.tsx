@@ -1,7 +1,7 @@
 import './Home.css'
 import * as React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { fbCreate, fbDelete, fbGetAll, fbGetFolders, fbUpdate } from './services/joremal.tsx'
+import { fbCreate, fbDelete, fbGetAll, fbGetAllFolders, fbUpdate } from './services/joremal.tsx'
 import { capitalize } from './helpers/helpers.tsx'
 import { v4 } from 'uuid'
 import { fakerNB_NO } from '@faker-js/faker'
@@ -17,6 +17,7 @@ import ChangeUserData from './components/changeUserData.tsx'
 import firestore = firebase.firestore
 
 const LOCAL_STORAGE_CURRENT_FOLDER = 'joremal.currentFolder'
+const LOCAL_STORAGE_ORDER_ASC = 'joremal.orderAsc'
 
 export type TodoItem = {
   id: string
@@ -50,10 +51,10 @@ const Home = () => {
   const allTags = useMemo(() => todos.flatMap((todo) => todo.list), [todos])
 
   useEffect(() => {
-    const folder = localStorage.getItem(LOCAL_STORAGE_CURRENT_FOLDER) as string
-    if (folder) {
-      setCurrentFolder(folder)
-    }
+    const storageOrderAsc = localStorage.getItem(LOCAL_STORAGE_ORDER_ASC) === 'true'
+    if (storageOrderAsc) setOrderAsc(storageOrderAsc)
+    const storageCurrentFolder = localStorage.getItem(LOCAL_STORAGE_CURRENT_FOLDER) as string
+    if (storageCurrentFolder) setCurrentFolder(storageCurrentFolder)
     handleFolderList()
   }, [])
 
@@ -63,41 +64,6 @@ const Home = () => {
   }, [currentFolder])
 
   useEffect(() => {
-    handleTodoFilterAndSort()
-  }, [todoFilter, todos, orderAsc, tagFilter])
-
-  useEffect(() => {
-    if (todosWithFilterAndSort.length === 0) {
-      setCurrentFolder(folderList[0])
-    }
-  }, [todosWithFilterAndSort])
-
-  const handleFolderChange = (folder: string) => {
-    setCurrentFolder(folder) // TODO
-  }
-
-  const handleFolderList = () => {
-    fbGetFolders().then((res) => setFolderList(res))
-    setCurrentFolder(folderList[0])
-  }
-
-  const handleAddModalVisible = () => {
-    setAddModalVisible(!addModalVisible)
-  }
-
-  const handleUserDataModalVisible = () => {
-    setUserDataVisible(!userDataVisible)
-  }
-
-  const handleAddTodo = (newTodo: TodoItem) => {
-    fbCreate(newTodo).then(() => handleFetch())
-
-    if (!folderList.includes(newTodo.folder)) setFolderList([...folderList, newTodo.folder])
-
-    if (todoNameRef.current) todoNameRef.current.value = ''
-  }
-
-  const handleTodoFilterAndSort = () => {
     let filtered: TodoItem[] =
       todoFilter === 'complete'
         ? todos.filter((t) => t.complete)
@@ -107,7 +73,34 @@ const Home = () => {
 
     if (tagFilter.length > 0) filtered = filtered.filter((todo) => tagFilter.some((tag) => todo.list.includes(tag)))
     filtered = filtered.sort((a, b) => (orderAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
+
     setTodosWithFilterAndSort(filtered)
+    localStorage.setItem(LOCAL_STORAGE_ORDER_ASC, String(orderAsc))
+  }, [todos, todoFilter, orderAsc, tagFilter])
+
+  useEffect(() => {
+    if (todosWithFilterAndSort.length === 0) setCurrentFolder(folderList[0])
+  }, [todosWithFilterAndSort])
+
+  const handleFolderChange = (folder: string) => setCurrentFolder(folder)
+
+  const handleFolderList = () => {
+    fbGetAllFolders().then((res) => {
+      setCurrentFolder(res[0])
+      setFolderList(res)
+    })
+  }
+
+  const handleAddModalVisible = () => setAddModalVisible(!addModalVisible)
+
+  const handleUserDataModalVisible = () => setUserDataVisible(!userDataVisible)
+
+  const handleAddTodo = (newTodo: TodoItem) => {
+    fbCreate(newTodo).then(() => handleFetch())
+
+    if (!folderList.includes(newTodo.folder)) setFolderList([...folderList, newTodo.folder])
+
+    if (todoNameRef.current) todoNameRef.current.value = ''
   }
 
   const handleFetch = () => {
@@ -179,12 +172,6 @@ const Home = () => {
     },
     { incompleteTodos: 0, completeTodos: 0 }
   )
-  const hasIncompleteTodos = incompleteTodos === 0
-  const hasTodos: boolean = todos.length > 0
-
-  const setFilterComplete = () => setTodoFilter('complete')
-  const setFilterIncomplete = () => setTodoFilter('incomplete')
-  const clearTodoFilter = () => setTodoFilter(null)
 
   return !user ? (
     <Navigate to="/login" />
@@ -198,7 +185,7 @@ const Home = () => {
         width={'calc(100vw - 2rem)'}
         maxWidth={'400px'}
       >
-        <Grid xs={hasTodos ? 5 : 12}>
+        <Grid xs={todos.length > 0 ? 5 : 12}>
           <h1>J</h1>
         </Grid>
         <Grid
@@ -218,7 +205,7 @@ const Home = () => {
                 <Chip
                   component={'button'}
                   variant={todoFilter === 'complete' ? 'filled' : 'outlined'}
-                  onClick={todoFilter === 'complete' ? clearTodoFilter : setFilterComplete}
+                  onClick={todoFilter === 'complete' ? () => setTodoFilter(null) : () => setTodoFilter('complete')}
                   icon={<Award04Icon />}
                   label={`${incompleteTodos === 0 ? 'Alle ' : ''}${completeTodos} fullført${
                     completeTodos === 1 || incompleteTodos === 0 ? '' : 'e'
@@ -232,7 +219,7 @@ const Home = () => {
                 <Chip
                   component={'button'}
                   variant={todoFilter === 'incomplete' ? 'filled' : 'outlined'}
-                  onClick={todoFilter === 'incomplete' ? clearTodoFilter : setFilterIncomplete}
+                  onClick={todoFilter === 'incomplete' ? () => setTodoFilter(null) : () => setTodoFilter('incomplete')}
                   icon={<WorkoutKickingIcon />}
                   label={`${incompleteTodos} uferdig${incompleteTodos === 1 ? '' : 'e'}`}
                   color={'warning'}
@@ -249,9 +236,9 @@ const Home = () => {
             toggleAllTodos={handleToggleAllTodos}
             removeAllTodo={handleRemoveCompletedTodos}
             autoFill={autoFill}
-            hasIncompleteTodos={hasIncompleteTodos}
+            incompleteTodos={incompleteTodos}
             completeTodos={completeTodos}
-            hasTodos={hasTodos}
+            hasTodos={todos.length > 0}
             orderAsc={orderAsc}
             setOrderAsc={setOrderAsc}
             loading={loading}

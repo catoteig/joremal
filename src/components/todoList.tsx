@@ -50,7 +50,7 @@ export interface TodoListProps {
   toggleAllTodos: () => void
   removeAllTodo: () => void
   autoFill: () => void
-  hasIncompleteTodos: boolean
+  incompleteTodos: number
   completeTodos: number
   hasTodos: boolean
   orderAsc: boolean
@@ -74,7 +74,7 @@ const TodoList = (props: TodoListProps) => {
     removeTodo,
     hasTodos,
     toggleAllTodos,
-    hasIncompleteTodos,
+    incompleteTodos,
     completeTodos,
     removeAllTodo,
     autoFill,
@@ -95,6 +95,8 @@ const TodoList = (props: TodoListProps) => {
   const [expanded, setExpanded] = React.useState<string | false>(false)
 
   const { SignOut, user } = useContext(AuthContext)
+
+  const hasIncompleteTodos = incompleteTodos === 0
 
   const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false)
@@ -132,9 +134,7 @@ const TodoList = (props: TodoListProps) => {
     setExpanded(false)
   }
 
-  // const handleOrderBy = () => {
-  //   setOrderAsc(!orderAsc)
-  // }´
+  // const handleOrderBy = () => setOrderAsc(!orderAsc)
 
   const handleRandom = () => {
     autoFill()

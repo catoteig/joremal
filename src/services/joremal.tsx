@@ -4,7 +4,7 @@ import { TodoItem } from '../Home.tsx'
 
 const collectionName = 'joremal'
 
-export const fbGetFolders = async (): Promise<string[]> => {
+export const fbGetAllFolders = async (): Promise<string[]> => {
   const collectionRef = collection(getDb(), collectionName)
   const docRefs = await getDocs(collectionRef)
 
@@ -13,7 +13,6 @@ export const fbGetFolders = async (): Promise<string[]> => {
     const { folder } = todo.data() as TodoItem
     uniqueFolders.add(folder)
   })
-  console.log([uniqueFolders])
   return [...uniqueFolders].sort((a, b) => a.localeCompare(b))
 }
 
