@@ -26,8 +26,13 @@ export interface TodoSubmitProps {
   allTags: string[]
 }
 
-const TodoSubmit = (props: TodoSubmitProps) => {
-  const { todoNameRef, handleAddTodo, handleAddModalVisible, currentFolder, allFolders } = props
+const TodoSubmit = ({
+  todoNameRef,
+  handleAddTodo,
+  handleAddModalVisible,
+  currentFolder,
+  allFolders,
+}: TodoSubmitProps) => {
   const [tagInput, setTagInput] = useState<string>('')
   const [inputFieldValue, setInputFieldValue] = useState<string>('')
   const [noteFieldValue, setNoteFieldValue] = useState<string>('')

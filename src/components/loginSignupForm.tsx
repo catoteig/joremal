@@ -15,19 +15,17 @@ export interface LoginSignupFormProps {
   error: string | null
 }
 
-const LoginSignupForm = (props: LoginSignupFormProps) => {
-  const {
-    onSubmit,
-    subTitle,
-    buttonName,
-    loginLink = false,
-    emailFieldValue,
-    handleEmailFieldChange,
-    passwordFieldValue,
-    handlePasswordFieldChange,
-    error = null,
-  } = props
-
+const LoginSignupForm = ({
+  onSubmit,
+  subTitle,
+  buttonName,
+  loginLink = false,
+  emailFieldValue,
+  handleEmailFieldChange,
+  passwordFieldValue,
+  handlePasswordFieldChange,
+  error = null,
+}: LoginSignupFormProps) => {
   return (
     <Grid container spacing={'1rem'} margin={'0 1rem'} height={'4rem'} width={'calc(100vw - 2rem)'} maxWidth={'400px'}>
       <Grid xs={12}>{<h1>J</h1>}</Grid>

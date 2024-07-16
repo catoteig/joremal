@@ -7,8 +7,7 @@ export interface ChangeUserDataProps {
   setVisible: (visible: boolean) => void
 }
 
-const ChangeUserData = (props: ChangeUserDataProps) => {
-  const { setVisible } = props
+const ChangeUserData = ({ setVisible }: ChangeUserDataProps) => {
   const auth = useAuth()
   const { ChangePassword, user } = auth
 

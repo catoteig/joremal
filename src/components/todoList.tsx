@@ -67,44 +67,42 @@ export interface TodoListProps {
   folderList: string[]
 }
 
-const TodoList = (props: TodoListProps) => {
-  const {
-    todos,
-    toggleTodo,
-    removeTodo,
-    hasTodos,
-    toggleAllTodos,
-    incompleteTodos,
-    completeTodos,
-    removeAllTodo,
-    autoFill,
-    loading,
-    setAddVisible,
-    addVisible,
-    setTagFilter,
-    tagFilter,
-    setUserDataVisible,
-    currentFolder,
-    setCurrentFolder,
-    folderList,
-  } = props
-
+const TodoList = ({
+  todos,
+  toggleTodo,
+  removeTodo,
+  hasTodos,
+  toggleAllTodos,
+  incompleteTodos,
+  completeTodos,
+  removeAllTodo,
+  autoFill,
+  loading,
+  setAddVisible,
+  addVisible,
+  setTagFilter,
+  tagFilter,
+  setUserDataVisible,
+  currentFolder,
+  setCurrentFolder,
+  folderList,
+}: TodoListProps) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState('')
   const [removeLoading, setRemoveLoading] = React.useState(false)
-  const [expanded, setExpanded] = React.useState<string | false>(false)
+  const [expandedAccordion, setExpandedAccordion] = React.useState<string | false>(false)
 
   const { SignOut, user } = useContext(AuthContext)
 
   const hasIncompleteTodos = incompleteTodos === 0
 
   const handleChange = (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
-    setExpanded(newExpanded ? panel : false)
+    setExpandedAccordion(newExpanded ? panel : false)
   }
 
   const handleRemoveClick = (todo: TodoItem) => {
     removeTodo(todo.id)
-    setExpanded(false)
+    setExpandedAccordion(false)
     setSnackbarMessage(`${todo.name} slettet`)
     if (hasTodos) setSnackbarOpen(true)
   }
@@ -114,7 +112,7 @@ const TodoList = (props: TodoListProps) => {
 
   const handleRemoveAllClick = () => {
     removeAllTodo()
-    setExpanded(false)
+    setExpandedAccordion(false)
     setSnackbarMessage(`Alle utførte slettet (${completeTodos} stk)`)
     setMoreMenuAnchorEl(null)
     setSnackbarOpen(true)
@@ -131,7 +129,7 @@ const TodoList = (props: TodoListProps) => {
     toggleAllTodos()
     setMoreMenuAnchorEl(null)
     console.log(moreMenuAnchorEl)
-    setExpanded(false)
+    setExpandedAccordion(false)
   }
 
   // const handleOrderBy = () => setOrderAsc(!orderAsc)
@@ -384,7 +382,7 @@ const TodoList = (props: TodoListProps) => {
                   ? new Date(todo.updated.seconds * 1000).toLocaleDateString()
                   : null
                 const updatedString = updated && todo.complete ? ` - fullført ${updated}` : ''
-                const isExpanded = expanded === todo.id
+                const isExpanded = expandedAccordion === todo.id
 
                 // @ts-expect-error This color does exist in theme
                 const checkedIconColor = themeOpts.palette.secondary.dark

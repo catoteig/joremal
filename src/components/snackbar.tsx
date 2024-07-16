@@ -8,9 +8,8 @@ export interface SnackbarPropsExt extends SnackbarProps {
   message: string
 }
 
-const SimpleSnackbar = (props: SnackbarPropsExt) => {
+const SimpleSnackbar = ({ message }: SnackbarPropsExt) => {
   const [open, setOpen] = React.useState(false)
-  const { message } = props
 
   const handleClick = () => {
     setOpen(true)
