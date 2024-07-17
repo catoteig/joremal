@@ -16,25 +16,16 @@ export const fbGetAllFolders = async (): Promise<string[]> => {
   return [...uniqueFolders].sort((a, b) => a.localeCompare(b))
 }
 
-export const fbGetAll = async (folder: string): Promise<TodoItem[]> => {
-  const q = query(collection(getDb(), collectionName), where('folder', '==', folder))
+export const fbGetAll = async (folder?: string): Promise<TodoItem[]> => {
+  const q = folder
+    ? query(collection(getDb(), collectionName), where('folder', '==', folder))
+    : query(collection(getDb(), collectionName))
+
   const doc_refs = await getDocs(q)
 
   const res: TodoItem[] = []
+  doc_refs.forEach((todo) => res.push({ ...(todo.data() as TodoItem), id: todo.id }))
 
-  doc_refs.forEach((todo) => {
-    const { name, complete, notes, created, updated, list, folder } = todo.data() as TodoItem
-    res.push({
-      id: todo.id,
-      name: name,
-      complete: complete,
-      notes: notes,
-      created: created,
-      updated: updated,
-      list: list,
-      folder: folder,
-    })
-  })
   return res
   // return [
   //   {

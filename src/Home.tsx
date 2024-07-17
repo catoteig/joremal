@@ -251,6 +251,7 @@ const Home = () => {
             currentFolder={currentFolder}
             setCurrentFolder={handleFolderChange}
             folderList={folderList}
+            handleAddTodo={handleAddTodo}
           />
         </Grid>
       </Grid>

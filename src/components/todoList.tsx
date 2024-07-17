@@ -7,6 +7,7 @@ import {
   Alert,
   Badge,
   Box,
+  capitalize,
   Chip,
   CircularProgress,
   Container,
@@ -17,6 +18,7 @@ import {
   MenuItem,
   Snackbar,
   Stack,
+  TextField,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { TodoItem } from '../Home.tsx'
@@ -42,6 +44,7 @@ import { AuthContext } from '../AuthContext.ts'
 import Typography from '@mui/material/Typography'
 import { themeOpts } from '../theme.tsx'
 import Button from '@mui/material/Button'
+import { v4 } from 'uuid'
 
 export interface TodoListProps {
   todos: TodoItem[]
@@ -65,6 +68,7 @@ export interface TodoListProps {
   currentFolder: string
   setCurrentFolder: (folder: string) => void
   folderList: string[]
+  handleAddTodo: (newTodo: TodoItem) => void
 }
 
 const TodoList = ({
@@ -86,11 +90,33 @@ const TodoList = ({
   currentFolder,
   setCurrentFolder,
   folderList,
+  handleAddTodo,
 }: TodoListProps) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState('')
   const [removeLoading, setRemoveLoading] = React.useState(false)
   const [expandedAccordion, setExpandedAccordion] = React.useState<string | false>(false)
+  const [quickTodoInput, setQuickTodoInput] = React.useState('')
+
+  const handleQuickTodoChange = (e: React.ChangeEvent<HTMLInputElement>) => setQuickTodoInput(e.target.value)
+  const handleQuickTodoSubmitKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (!quickTodoInput.trim()) return
+      const newTodo: TodoItem = {
+        name: capitalize(quickTodoInput),
+        complete: false,
+        id: v4(),
+        notes: '',
+        // @ts-expect-error Created datatype
+        created: new Date(),
+        list: [],
+        folder: currentFolder,
+      }
+      handleAddTodo(newTodo)
+      setQuickTodoInput('')
+    }
+  }
 
   const { SignOut, user } = useContext(AuthContext)
 
@@ -225,15 +251,10 @@ const TodoList = ({
           <>
             <Grid
               xs={12}
-              sx={{
-                padding: 0,
-                paddingTop: 1,
-                verticalAlign: 'middle',
-                borderBottom: '1px dashed lightgrey',
-              }}
-              height={'3.3rem'}
+              height={'3.5rem'}
+              sx={{ padding: 0, paddingTop: 1, verticalAlign: 'middle', borderBottom: '1px dashed lightgrey' }}
             >
-              <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
+              <Stack direction={'row'} spacing={1} justifyContent={'start'} alignItems={'center'} margin={'0 0.5rem'}>
                 {/*<ConfettiElement refresh={refresh} />*/}
                 <Button
                   onClick={handleFolderMenuClick}
@@ -370,7 +391,7 @@ const TodoList = ({
                 </Menu>
               </Stack>
             </Grid>
-            <Grid xs={12} sx={{ padding: 0 }} height={'calc(100% - 3.3rem)'} overflow={'auto'}>
+            <Grid xs={12} height={'calc(100% - 8rem)'} sx={{ padding: 0 }} overflow={'auto'}>
               {todos.map((todo) => {
                 const labelId = `checkbox-list-label-${todo.id}`
                 const handleTodoClick = (e: { stopPropagation: () => void }) => {
@@ -403,6 +424,9 @@ const TodoList = ({
                       '&:before': {
                         backgroundColor: 'transparent',
                       },
+                      '.MuiAccordionSummary-root': {
+                        p: '0 0.5rem',
+                      },
                     }}
                     expanded={isExpanded}
                     onChange={handleChange(todo.id)}
@@ -410,6 +434,9 @@ const TodoList = ({
                     <AccordionSummary
                       sx={{
                         backgroundColor: isExpanded ? '#FAFAFA' : 'transparent',
+                        '.MuiAccordionSummary-content': {
+                          margin: 0,
+                        },
                       }}
                       expandIcon={<ArrowDown01Icon />}
                     >
@@ -490,6 +517,17 @@ const TodoList = ({
                   </Accordion>
                 )
               })}
+            </Grid>
+            <Grid xs={12} height={'4.5rem'} borderTop={'1px dashed lightgrey'}>
+              <TextField
+                autoFocus
+                placeholder={'Ny'}
+                variant={'outlined'}
+                fullWidth
+                onChange={handleQuickTodoChange}
+                value={quickTodoInput}
+                onKeyDown={handleQuickTodoSubmitKey}
+              />
             </Grid>
             <Snackbar
               open={snackbarOpen}
