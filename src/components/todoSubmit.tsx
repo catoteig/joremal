@@ -22,6 +22,7 @@ export interface TodoSubmitProps {
   handleAddTodo: (newTodo: TodoItem) => void
   handleAddModalVisible: (newFolder?: boolean) => void
   currentFolder: string
+  setCurrentFolder: (folder: string) => void
   allFolders: string[]
   allTags: string[]
 }
@@ -31,6 +32,7 @@ const TodoSubmit = ({
   handleAddTodo,
   handleAddModalVisible,
   currentFolder,
+  setCurrentFolder,
   allFolders,
 }: TodoSubmitProps) => {
   const [tagInput, setTagInput] = useState<string>('')
@@ -59,6 +61,7 @@ const TodoSubmit = ({
     setNoteFieldValue('')
     handleAddModalVisible()
     setTagInputListValue([])
+    if (createsNewFolder) setCurrentFolder(folderInputValue)
   }
 
   const handleInputFieldChange = (event: { target: { value: SetStateAction<string> } }) => {
@@ -147,6 +150,7 @@ const TodoSubmit = ({
                   value={tagInput}
                   onChange={handleTagInput}
                   inputRef={tagNameRef}
+                  onKeyDown={(e) => e.key === 'Enter' && handleTagListChange()}
                   fullWidth
                 />
                 <IconButton

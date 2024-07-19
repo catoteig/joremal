@@ -269,6 +269,7 @@ const Home = () => {
           handleAddTodo={handleAddTodo}
           handleAddModalVisible={handleAddModalVisible}
           currentFolder={currentFolder}
+          setCurrentFolder={handleFolderChange}
           allFolders={folderList}
           allTags={allTags}
         />
